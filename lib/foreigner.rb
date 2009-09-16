@@ -7,13 +7,13 @@ module ActiveRecord
     include Foreigner::ConnectionAdapters::SchemaStatements
     include Foreigner::ConnectionAdapters::SchemaDefinitions
   end
-  
+
   SchemaDumper.class_eval do
     include Foreigner::SchemaDumper
   end
-  
+
   Base.class_eval do
-    if ['MySQL', 'PostgreSQL'].include? connection.adapter_name
+    if ['MySQL', 'PostgreSQL', 'SQLite'].include? connection.adapter_name
       require "foreigner/connection_adapters/#{connection.adapter_name.downcase}_adapter"
     end
   end
