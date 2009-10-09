@@ -1,5 +1,6 @@
 require 'foreigner/connection_adapters/abstract/schema_statements'
 require 'foreigner/connection_adapters/abstract/schema_definitions'
+require 'foreigner/connection_adapters/sql_2003'
 require 'foreigner/schema_dumper'
 
 module ActiveRecord
@@ -13,7 +14,10 @@ module ActiveRecord
   end
 
   Base.class_eval do
-    if ['MySQL', 'PostgreSQL', 'SQLite'].include? connection.adapter_name
+    if %w(SQLite).include? connection.adapter_name
+      require "foreigner/conndection_adapters/#{connection_adapter_name.downcase}_adapter
+    end
+    if %w(MySQL PostgreSQL).include? connection.adapter_name
       require "foreigner/connection_adapters/#{connection.adapter_name.downcase}_adapter"
     end
   end
