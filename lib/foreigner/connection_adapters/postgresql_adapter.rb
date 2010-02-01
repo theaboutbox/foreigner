@@ -2,6 +2,16 @@ module Foreigner
   module ConnectionAdapters
     module PostgreSQLAdapter
       include Foreigner::ConnectionAdapters::Sql2003
+
+      def remove_foreign_key(table, options)
+        if Hash === options
+          foreign_key_name = foreign_key_name(table, options[:column], options)
+        else
+          foreign_key_name = foreign_key_name(table, "#{options.to_s.singularize}_id")
+        end
+
+        execute "ALTER TABLE #{quote_table_name(table)} DROP CONSTRAINT #{quote_column_name(foreign_key_name)}"
+      end
       
       def foreign_keys(table_name)
         fk_info = select_all %{
@@ -23,7 +33,7 @@ module Foreigner
         }
         
         fk_info.map do |row|
-          options = {:column => row['column'], :name => row['name'], :primary_key = row['primary_key']}
+          options = {:column => row['column'], :name => row['name'], :primary_key => row['primary_key']}
 
           if row['dependency'] == 'CASCADE'
             options[:dependent] = :delete

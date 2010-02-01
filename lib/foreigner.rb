@@ -15,10 +15,11 @@ module ActiveRecord
 
   Base.class_eval do
     if %w(SQLite).include? connection.adapter_name
-      require "foreigner/conndection_adapters/#{connection_adapter_name.downcase}_adapter
+      require "foreigner/connection_adapters/#{connection_adapter_name.downcase}_adapter"
     end
-    if %w(MySQL PostgreSQL).include? connection.adapter_name
-      require "foreigner/connection_adapters/#{connection.adapter_name.downcase}_adapter"
+    if %w(mysql postgresql).include? connection_pool.spec.config[:adapter].downcase
+      require "foreigner/connection_adapters/#{connection_pool.spec.config[:adapter].downcase}_adapter"
     end
   end
 end
+
