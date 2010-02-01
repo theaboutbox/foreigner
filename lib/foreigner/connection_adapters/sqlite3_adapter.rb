@@ -4,16 +4,16 @@ module Foreigner
   module ConnectionAdapters
     module TableDefinition
       class ForeignKey < Struct.new(:base, :to_table, :options)
+
         def to_sql
           base.foreign_key_definition(to_table, options)
         end
         alias to_s :to_sql
       end
+
       def self.included(base)
         base.class_eval do
           include InstanceMethods
-          alias_method_chain :references, :foreign_keys
-          alias_method_chain :to_sql, :foreign_keys
         end
       end
 
@@ -58,17 +58,6 @@ module Foreigner
             foreign_keys << ForeignKey.new(@base, to_table, options)
           end
         end
-
-        def to_sql_with_foreign_keys
-          sql = to_sql_without_foreign_keys
-          sql << ', ' << (foreign_keys * ', ') if foreign_keys.present?
-          sql
-        end
-
-        private
-          def foreign_keys
-            @foreign_keys ||= []
-          end
       end
     end
 

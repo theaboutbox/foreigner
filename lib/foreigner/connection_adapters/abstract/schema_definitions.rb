@@ -20,6 +20,7 @@ module Foreigner
         base.class_eval do
           include InstanceMethods
           alias_method_chain :references, :foreign_keys
+          alias_method_chain :to_sql, :foreign_keys
         end
       end
 
@@ -42,6 +43,17 @@ module Foreigner
             'to add a foreign key, use add_foreign_key', caller[0,10]
           )
         end
+
+        def to_sql_with_foreign_keys
+          sql = to_sql_without_foreign_keys
+          sql << ', ' << (foreign_keys * ', ') if foreign_keys.present?
+          sql
+        end
+
+        private
+          def foreign_keys
+            @foreign_keys ||= []
+          end
       end
     end
 
