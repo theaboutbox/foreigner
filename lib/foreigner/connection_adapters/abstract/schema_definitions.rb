@@ -2,19 +2,19 @@ module Foreigner
   module ConnectionAdapters
     class ForeignKeyDefinition < Struct.new(:from_table, :to_table, :options) #:nodoc:
     end
-    
+
     module SchemaDefinitions
       def self.included(base)
         base::TableDefinition.class_eval do
           include Foreigner::ConnectionAdapters::TableDefinition
         end
-        
+
         base::Table.class_eval do
           include Foreigner::ConnectionAdapters::Table
         end
       end
     end
-  
+
     module TableDefinition
       def self.included(base)
         base.class_eval do
@@ -22,7 +22,7 @@ module Foreigner
           alias_method_chain :references, :foreign_keys
         end
       end
-    
+
       module InstanceMethods
         def references_with_foreign_keys(*args)
           options = args.extract_options!
@@ -35,7 +35,7 @@ module Foreigner
 
           references_without_foreign_keys(*(args << options))
         end
-    
+
         def foreign_key(to_table, options = {})
           ActiveSupport::Deprecation.warn(
             'adding a foreign key inside create_table is deprecated. ' +
@@ -69,7 +69,7 @@ module Foreigner
         def foreign_key(to_table, options = {})
           @base.add_foreign_key(@table_name, to_table, options)
         end
-    
+
         # Remove the given foreign key from the table.
         #
         # ===== Examples
@@ -82,17 +82,17 @@ module Foreigner
         def remove_foreign_key(options = {})
           @base.remove_foreign_key(@table_name, options)
         end
-      
+
         # Adds a :foreign_key option to TableDefinition.references.
         # If :foreign_key is true, a foreign key constraint is added to the table.
         # You can also specify a hash, which is passed as foreign key options.
-        # 
+        #
         # ===== Examples
         # ====== Add goat_id column and a foreign key to the goats table.
         #  t.references(:goat, :foreign_key => true)
         # ====== Add goat_id column and a cascading foreign key to the goats table.
         #  t.references(:goat, :foreign_key => {:dependent => :delete})
-        # 
+        #
         # Note: No foreign key is created if :polymorphic => true is used.
         def references_with_foreign_keys(*args)
           options = args.extract_options!
@@ -110,3 +110,4 @@ module Foreigner
     end
   end
 end
+

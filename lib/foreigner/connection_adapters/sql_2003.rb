@@ -4,7 +4,16 @@ module Foreigner
       def supports_foreign_keys?
         true
       end
-    
+
+      def foreign_key_definition(to_table, options = {})
+        column  = options[:column] || "#{to_table.to_s.singularize}_id"
+        dependency = dependency_sql(options[:dependent])
+
+        sql = "FOREIGN KEY (#{quote_column_name(column)}) REFERENCES #{quote_table_name(to_table)}(id)"
+        sql << " #{dependency}" unless dependency.blank?
+        sql
+      end
+
       def add_foreign_key(from_table, to_table, options = {})
         column  = options[:column] || "#{to_table.to_s.singularize}_id"
         foreign_key_name = foreign_key_name(from_table, column, options)
@@ -18,7 +27,7 @@ module Foreigner
           "REFERENCES #{quote_table_name(ActiveRecord::Migrator.proper_table_name(to_table))}(#{primary_key})"
 
         sql << " #{dependency}" unless dependency.blank?
-      
+
         execute(sql)
       end
 
@@ -41,3 +50,4 @@ module Foreigner
     end
   end
 end
+

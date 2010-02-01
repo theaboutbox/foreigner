@@ -1,9 +1,8 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{foreigner}
-  s.version = "0.4.0"
-
+  s.name = %q{dwilkie-foreigner}
+  s.version = "0.4.1"
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["David Wilkie"]
   s.date = %q{2010-02-01}
@@ -20,7 +19,7 @@ Gem::Specification.new do |s|
     lib/foreigner/connection_adapters/sql_2003.rb
     lib/foreigner/connection_adapters/mysql_adapter.rb
     lib/foreigner/connection_adapters/postgresql_adapter.rb
-    lib/foreigner/connection_adapters/sqlite_adapter.rb
+    lib/foreigner/connection_adapters/sqlite3_adapter.rb
     lib/foreigner/connection_adapters/abstract/schema_definitions.rb
     lib/foreigner/connection_adapters/abstract/schema_statements.rb
     test/helper.rb
