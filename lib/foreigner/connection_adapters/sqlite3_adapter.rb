@@ -29,7 +29,6 @@ module Foreigner
         #  t.references(:goat, :foreign_key => {:dependent => :delete})
         #
         # Note: No foreign key is created if :polymorphic => true is used.
-        # Note: If no name is specified, the database driver creates one for you!
         def references_with_foreign_keys(*args)
           options = args.extract_options!
           fk_options = options.delete(:foreign_key)
@@ -43,15 +42,15 @@ module Foreigner
         end
 
         # Defines a foreign key for the table. +to_table+ can be a single Symbol, or
-        # an Array of Symbols. See SchemaStatements#add_foreign_key
+        # an Array of Symbols.
         #
         # ===== Examples
         # ====== Creating a simple foreign key
         #  t.foreign_key(:people)
         # ====== Defining the column
         #  t.foreign_key(:people, :column => :sender_id)
-        # ====== Creating a named foreign key
-        #  t.foreign_key(:people, :column => :sender_id, :name => 'sender_foreign_key')
+        # ====== Specify cascading foreign key
+        #  t.foreign_key(:people, :dependent => :delete)
         def foreign_key(to_table, options = {})
           if @base.supports_foreign_keys?
             to_table = to_table.to_s.pluralize if ActiveRecord::Base.pluralize_table_names
@@ -72,12 +71,20 @@ FROM sqlite_master
 WHERE sql LIKE '%FOREIGN KEY%'
 AND name = '#{table_name}'
 }
-      if !create_table_info.nil?
+      unless create_table_info.nil?
         fk_columns = create_table_info.scan(/FOREIGN KEY\s*\(\"([^\"]+)\"\)/)
         fk_tables = create_table_info.scan(/REFERENCES\s*\"([^\"]+)\"/)
-        if fk_columns.size == fk_tables.size
+        fk_references = create_table_info.scan(/REFERENCES[^\,]+/)
+        if fk_columns.size == fk_tables.size && fk_references.size == fk_columns.size
           fk_columns.each_with_index do |fk_column, index|
-            foreign_keys << ForeignKeyDefinition.new(table_name, fk_tables[index][0], :column => fk_column[0])
+            if fk_references[index] =~ /ON DELETE CASCADE/
+              fk_references[index] = :delete
+            elsif fk_references[index] =~ /ON DELETE SET NULL/
+              fk_references[index] = :nullify
+            else
+              fk_references[index] = nil
+            end
+            foreign_keys << ForeignKeyDefinition.new(table_name, fk_tables[index][0], :column => fk_column[0], :dependent => fk_references[index])
           end
         end
       end

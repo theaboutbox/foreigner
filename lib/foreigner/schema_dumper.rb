@@ -28,13 +28,12 @@ module Foreigner
 
       private
         def foreign_keys(table_name, stream)
-          debugger
           if (foreign_keys = @connection.foreign_keys(table_name)).any?
             add_foreign_key_statements = foreign_keys.map do |foreign_key|
               statement_parts = [ ('add_foreign_key ' + foreign_key.from_table.inspect) ]
               statement_parts << foreign_key.to_table.inspect
               statement_parts << (':name => ' + foreign_key.options[:name].inspect)
-              
+
               if foreign_key.options[:column] != "#{foreign_key.to_table.singularize}_id"
                 statement_parts << (':column => ' + foreign_key.options[:column].inspect)
               end
@@ -53,8 +52,9 @@ module Foreigner
           end
         end
 
-        # This is a direct copy from
-        # active_record/schema.dumper
+        # This is almost direct copy from
+        # active_record/schema.dumper with the add_foreign_keys method
+        # inserted into the middle
         def foreign_key_table(table, stream)
           columns = @connection.columns(table)
           begin
@@ -119,6 +119,7 @@ module Foreigner
               tbl.puts
             end
 
+            # add the foreign keys
             add_foreign_keys(table, tbl)
 
             tbl.puts "  end"
@@ -142,6 +143,7 @@ module Foreigner
             add_foreign_key_statements = foreign_keys.map do |foreign_key|
               statement_parts = ["  t.foreign_key " + foreign_key.to_table.inspect]
               statement_parts << (':column => ' + foreign_key.options[:column].inspect)
+              statement_parts << (':dependent => ' + foreign_key.options[:dependent].inspect)
               '  ' + statement_parts.join(', ')
             end
 
@@ -151,3 +153,4 @@ module Foreigner
     end
   end
 end
+

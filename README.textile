@@ -1,0 +1,114 @@
+h1. dwilkie Foreigner
+
+dwilkie-foreigner is a fork of "Matt Higgins Foreigner":http://github.com/matthuhiggins/foreigner/
+which supports adding AND enforcing foreign key constraints on Sqlite3 databases.
+
+h2. Some Examples
+
+dwilkie-foreigner allows you to do the following in your migration files
+<pre>
+  create_table :comments do |t|
+    t.references :posts, :foreign_key => true, :null => false
+  end
+</pre>
+Which will generate the following SQL:
+<pre>
+  CREATE TABLE "comments" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  "post_id" integer NOT NULL,
+  FOREIGN KEY ("post_id") REFERENCES "posts"(id));
+</pre>
+
+Go a different column name?
+<pre>
+  create_table :comments do |t|
+    t.references :article, :null => false
+    t.foreign_key :posts, :column => :article_id
+  end
+</pre>
+Which generates:
+<pre>
+  CREATE TABLE "comments" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  "article_id" integer NOT NULL,
+  FOREIGN KEY ("article_id") REFERENCES "posts"(id));
+</pre>
+
+Want to specify a dependency (nullify or delete)?
+<pre>
+  create_table :comments do |t|
+    t.references :posts, :foreign_key => {:dependent => :delete}, :null => false
+  end
+</pre>
+Generates:
+<pre>
+  CREATE TABLE "comments" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  "post_id" integer NOT NULL,
+  FOREIGN KEY ("post_id") REFERENCES "posts"(id) ON DELETE CASCADE);
+</pre>
+Or:
+<pre>
+  create_table :comments do |t|
+    t.references :article, :null => false
+    t.foreign_key :posts, :column => :article_id, :dependent => :nullify
+  end
+</pre>
+Which generates:
+<pre>
+  CREATE TABLE "comments" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  "article_id" integer NOT NULL,
+  FOREIGN KEY ("article_id") REFERENCES "posts"(id) ON DELETE SET NULL);
+</pre>
+
+h2. Enforcing constraints
+
+SQLite does not enforce database constraints out of the box
+This provides you with the flexibility in choosing whether or not to enforce
+constraints at the DB level or not.
+
+In order to enforce your constraints:
+<pre>
+  script/dbconsole
+  .genfkey --exec
+</pre>
+
+While your in the console run:
+<pre>
+  .schema
+</pre>
+to see your constraints implemented as triggers
+
+h2. schema.rb
+All of the constrants are updated in schema.rb
+when you run:
+<pre>
+  rake db:migrate
+  rake db:schema:dump
+</pre>
+This allows you to see the state of your migratons and
+take advantage of using <pre>rake db:schema:load</pre>
+
+h2. Limitations
+
+Since SQLite does not have complete ALTER TABLE support
+you cannot use the following syntax:
+<pre>
+  add_foreign_key
+  remove_foreign_key
+</pre>
+
+Therefore you must add your foreign keys when you define your table,
+which may involve editing existing migration files instead of generating new ones
+
+h2. Installation
+
+Add the following to environment.rb:
+<pre>
+  config.gem "dwilkie-foreigner", :lib => "foreigner", :source => "http://gemcutter.org"
+<pre>
+Then run <pre>sudo rake gems:install</pre>
+
+h2. See also
+Don't need support for other databases?
+Check out sqlite-foreigner: "http://github.com/dwilkie/sqlite3-foreigner/tree/master"
+
+Copyright (c) 2009 David Wilkie, released under the MIT license
+

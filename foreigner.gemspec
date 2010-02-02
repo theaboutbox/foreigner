@@ -7,11 +7,11 @@ Gem::Specification.new do |s|
   s.authors = ["David Wilkie"]
   s.date = %q{2010-02-01}
   s.email = %q{dwilkie@gmail.com}
-  s.extra_rdoc_files = ["README"]
+  s.extra_rdoc_files = ["README.textile"]
   s.files = %w(
     MIT-LICENSE
     Rakefile
-    README
+    README.textile
     lib/foreigner.rb
     lib/foreigner
     lib/foreigner/schema_dumper.rb
@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
     test/mysql_adapter_test.rb
   )
   s.homepage = "http://github.com/dwilkie/foreigner/tree/master"
-  s.rdoc_options = ["--line-numbers", "--main", "README"]
+  s.rdoc_options = ["--line-numbers", "--main", "README.textile"]
   s.require_paths = %w(lib)
   s.rubyforge_project = "foreigner"
   s.rubygems_version = "1.3.5"
