@@ -77,6 +77,7 @@ While your in the console run:
 to see your constraints implemented as triggers
 
 h2. schema.rb
+
 All of the constrants are updated in schema.rb
 when you run:
 <pre>
@@ -103,12 +104,16 @@ h2. Installation
 Add the following to environment.rb:
 <pre>
   config.gem "dwilkie-foreigner", :lib => "foreigner", :source => "http://gemcutter.org"
+</pre>
+Then run
 <pre>
-Then run <pre>sudo rake gems:install</pre>
+  sudo rake gems:install
+</pre>
 
 h2. See also
+
 Don't need support for other databases?
-Check out sqlite-foreigner: "http://github.com/dwilkie/sqlite3-foreigner/tree/master"
+Check out "sqlite-foreigner":http://github.com/dwilkie/sqlite-foreigner/tree/master
 
 Copyright (c) 2009 David Wilkie, released under the MIT license
 
