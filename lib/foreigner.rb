@@ -14,11 +14,13 @@ module ActiveRecord
   end
 
   Base.class_eval do
-    if %w(sqlite3).include? connection_pool.spec.config[:adapter].downcase
-      require "foreigner/connection_adapters/#{connection_pool.spec.config[:adapter].downcase}_adapter"
-    end
-    if %w(mysql postgresql).include? connection_pool.spec.config[:adapter].downcase
-      require "foreigner/connection_adapters/#{connection_pool.spec.config[:adapter].downcase}_adapter"
+    unless ENV["RAILS_ENV"] == "test"
+      if %w(sqlite3).include? connection_pool.spec.config[:adapter].downcase
+        require "foreigner/connection_adapters/#{connection_pool.spec.config[:adapter].downcase}_adapter"
+      end
+      if %w(mysql postgresql).include? connection_pool.spec.config[:adapter].downcase
+        require "foreigner/connection_adapters/#{connection_pool.spec.config[:adapter].downcase}_adapter"
+      end
     end
   end
 end
