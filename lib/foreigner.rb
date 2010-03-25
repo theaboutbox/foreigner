@@ -3,6 +3,23 @@ require 'foreigner/connection_adapters/abstract/schema_definitions'
 require 'foreigner/connection_adapters/sql_2003'
 require 'foreigner/schema_dumper'
 
+module Foreigner
+  mattr_accessor :adapters
+  self.adapters = {}
+
+  class << self
+    def register(adapter_name, file_name)
+      adapters[adapter_name] = file_name
+    end
+
+    def load_adapter!(adapter_name)
+      if adapters.key?(adapter_name)
+        require adapters[adapter_name]
+      end
+    end
+  end
+end
+
 module ActiveRecord
   module ConnectionAdapters
     include Foreigner::ConnectionAdapters::SchemaStatements
@@ -11,17 +28,6 @@ module ActiveRecord
 
   SchemaDumper.class_eval do
     include Foreigner::SchemaDumper
-  end
-
-  Base.class_eval do
-    unless ENV["RAILS_ENV"] == "test"
-      if %w(sqlite3).include? connection_pool.spec.config[:adapter].downcase
-        require "foreigner/connection_adapters/#{connection_pool.spec.config[:adapter].downcase}_adapter"
-      end
-      if %w(mysql postgresql).include? connection_pool.spec.config[:adapter].downcase
-        require "foreigner/connection_adapters/#{connection_pool.spec.config[:adapter].downcase}_adapter"
-      end
-    end
   end
 end
 
