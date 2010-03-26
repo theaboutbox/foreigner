@@ -16,6 +16,14 @@ module Foreigner
     end
 
     module TableDefinition
+      class ForeignKey < Struct.new(:base, :to_table, :options)
+
+        def to_sql
+          base.foreign_key_definition(to_table, options)
+        end
+        alias to_s :to_sql
+      end
+
       def self.included(base)
         base.class_eval do
           include InstanceMethods
@@ -25,6 +33,46 @@ module Foreigner
       end
 
       module InstanceMethods
+        # Adds a :foreign_key option to TableDefinition.references.
+        # If :foreign_key is true, a foreign key constraint is added to the table.
+        # You can also specify a hash, which is passed as foreign key options.
+        #
+        # ===== Examples
+        # ====== Add goat_id column and a foreign key to the goats table.
+        #  t.references(:goat, :foreign_key => true)
+        # ====== Add goat_id column and a cascading foreign key to the goats table.
+        #  t.references(:goat, :foreign_key => {:dependent => :delete})
+        #
+        # Note: No foreign key is created if :polymorphic => true is used.
+        def references_with_foreign_keys(*args)
+          options = args.extract_options!
+          fk_options = options.delete(:foreign_key)
+
+          if fk_options && !options[:polymorphic]
+            fk_options = {} if fk_options == true
+            args.each { |to_table| foreign_key(to_table, fk_options) }
+          end
+
+          references_without_foreign_keys(*(args << options))
+        end
+
+        # Defines a foreign key for the table. +to_table+ can be a single Symbol, or
+        # an Array of Symbols.
+        #
+        # ===== Examples
+        # ====== Creating a simple foreign key
+        #  t.foreign_key(:people)
+        # ====== Defining the column
+        #  t.foreign_key(:people, :column => :sender_id)
+        # ====== Specify cascading foreign key
+        #  t.foreign_key(:people, :dependent => :delete)
+        def foreign_key(to_table, options = {})
+          if @base.supports_foreign_keys?
+            to_table = to_table.to_s.pluralize if ActiveRecord::Base.pluralize_table_names
+            foreign_keys << ForeignKey.new(@base, to_table, options)
+          end
+        end
+
         def to_sql_with_foreign_keys
           sql = to_sql_without_foreign_keys
           sql << ', ' << (foreign_keys * ', ') if foreign_keys.present?
