@@ -5,6 +5,6 @@ Foreigner.register 'postgresql', 'foreigner/connection_adapters/postgresql_adapt
 Foreigner.register 'sqlite3', 'foreigner/connection_adapters/sqlite3_adapter'
 
 config.after_initialize do
-  Foreigner.load_adapter! ActiveRecord::Base.connection_pool.spec.config[:adapter].downcase
+  Foreigner.load_adapter! ActiveRecord::Base.connection_pool.connection.tables
 end
 
