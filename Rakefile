@@ -21,3 +21,18 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include('README')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
+
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |gemspec|
+    gemspec.name = "dwilkie-foreigner"
+    gemspec.summary = "Foreign keys for Rails migrations with SQLite support"
+    gemspec.description = "Allows you to add foreign keys to your migrations and enforce them"
+    gemspec.email = "dwilkie@gmail.com"
+    gemspec.homepage = "http://github.com/dwilkie/foreigner"
+    gemspec.authors = ["David Wilkie"]
+  end
+rescue LoadError
+  puts "Jeweler not available. Install it with: gem install jeweler"
+end
+
