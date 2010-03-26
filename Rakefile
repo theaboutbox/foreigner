@@ -32,6 +32,7 @@ begin
     gemspec.homepage = "http://github.com/dwilkie/foreigner"
     gemspec.authors = ["David Wilkie"]
   end
+  Jeweler::GemcutterTasks.new
 rescue LoadError
   puts "Jeweler not available. Install it with: gem install jeweler"
 end
