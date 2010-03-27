@@ -39,12 +39,6 @@ class SQLite3AdapterTest < ActiveRecord::TestCase
     assert_match(/FOREIGN KEY \(\"farm_id\"\) REFERENCES \"farms\"\(id\) ON DELETE CASCADE/, schema(table))
   end
 
-  # add assertions to test schema_dumper
-
-  # then in mysql_adapter_test
-  # add the same tests for mysql to see if we get foreign_keys on the table definition
-  # too hard to test? see the guide you downloaded
-
   # t.references :farm, :foreign_key => :true
   def test_adding_pigs_to_the_farm_with_t_dot_references_farm_foreign_key_true
     premigrate

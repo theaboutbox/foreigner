@@ -1,7 +1,5 @@
 h1. dwilkie Foreigner
 
-WORKING WITH RAILS 3!
-
 dwilkie-foreigner is a fork of "Matt Higgins Foreigner":http://github.com/matthuhiggins/foreigner/
 which supports adding AND enforcing foreign key constraints on SQLite3 databases.
 
@@ -98,6 +96,10 @@ h2. Post Install
 To enable foreign keys you also need to add a file which
 includes the line <pre>Foreigner.enable</pre> in your config/initializers directory
 You can call this file whatever you want e.g. foreigner.rb
+
+h2. Testing
+There are built in tests for Mysql and SQLite3
+In order to run them you need to install "Plugin Test Helper":http://github.com/pluginaweek/plugin_test_helper
 
 Copyright (c) 2010 David Wilkie, released under the MIT license
 

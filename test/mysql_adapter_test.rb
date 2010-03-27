@@ -1,16 +1,63 @@
-# ENV['RAILS_ENV'] ||= 'mysql'
+ENV['RAILS_ENV'] ||= 'mysql'
 require File.dirname(__FILE__) + '/test_helper'
 require "foreigner/connection_adapters/mysql_adapter"
 
 class MysqlAdapterTest < ActiveRecord::TestCase
   include Foreigner::ConnectionAdapters::MysqlAdapter
 
-  # t.references :farm, :foreign_key => {:dependent => :delete}
-  def test_adding_books_to_the_farm_with_add_foreign_key_farms_books
+  # t.foreign_key :farm
+  def test_adding_cows_to_the_farm_with_t_dot_foreign_key_farm
     premigrate
     table = "cows"
     migrate table
-    assert_match(/FOREIGN KEY \(\"farm_id\"\) REFERENCES \"farms\"\(id\) ON DELETE CASCADE/, schema(table))
+    assert_match(/FOREIGN KEY\s*\(\`farm_id\`\) REFERENCES \`farms\`\s*\(\`id\`\)/, schema(table))
+  end
+
+  # t.foreign_key :farm, :column => :shearing_farm_id
+  def test_adding_sheep_to_the_farm_with_t_dot_foreign_key_farm_column_id_shearing_farm_id
+    premigrate
+    table = "sheep"
+    migrate table
+    assert_match(/FOREIGN KEY\s*\(\`shearing_farm_id\`\) REFERENCES \`farms\`\s*\(\`id\`\)/, schema(table))
+  end
+
+  # t.foreign_key :farm, :dependent => :nullify
+  def test_adding_bears_to_the_farm_with_t_dot_foreign_key_farm_dependent_nullify
+    premigrate
+    table = "bears"
+    migrate table
+    assert_match(/FOREIGN KEY\s*\(\`farm_id\`\) REFERENCES \`farms\`\s*\(\`id\`\) ON DELETE SET NULL/, schema(table))
+  end
+
+  # t.foreign_key :farm, :dependent => :delete
+  def test_adding_elephants_to_the_farm_with_t_dot_foreign_key_farm_dependent_delete
+    premigrate
+    table = "elephants"
+    migrate table
+    assert_match(/FOREIGN KEY\s*\(\`farm_id\`\) REFERENCES \`farms\`\s*\(\`id\`\) ON DELETE CASCADE/, schema(table))
+  end
+
+  def test_adding_pigs_to_the_farm_with_t_dot_references_farm_foreign_key_true
+    premigrate
+    table = "pigs"
+    migrate table
+    assert_match(/FOREIGN KEY\s*\(\`farm_id\`\) REFERENCES \`farms\`\s*\(\`id\`\)/, schema(table))
+  end
+
+  # t.references :farm, :foreign_key => {:dependent => :nullify}
+  def test_adding_tigers_to_the_farm_with_t_dot_references_farm_foreign_key_dependent_delete
+    premigrate
+    table = "tigers"
+    migrate table
+    assert_match(/FOREIGN KEY\s*\(\`farm_id\`\) REFERENCES \`farms\`\s*\(\`id\`\) ON DELETE SET NULL/, schema(table))
+  end
+
+  # t.references :farm, :foreign_key => {:dependent => :delete}
+  def test_adding_goats_to_the_farm_with_t_dot_references_farm_foreign_key_dependent_delete
+    premigrate
+    table = "goats"
+    migrate table
+    assert_match(/FOREIGN KEY\s*\(\`farm_id\`\) REFERENCES \`farms\`\s*\(\`id\`\) ON DELETE CASCADE/, schema(table))
   end
 
   def test_add_without_options
@@ -92,15 +139,15 @@ class MysqlAdapterTest < ActiveRecord::TestCase
     end
 
     def premigrate
+      @database = ActiveRecord::Base.configurations['mysql']['database']
+      ActiveRecord::Base.connection.drop_database(@database)
+      ActiveRecord::Base.connection.create_database(@database)
+      ActiveRecord::Base.connection.reset!
       migrate "farms"
     end
 
     def schema(table_name)
-      ActiveRecord::Base.connection.select_value %{
-        SELECT sql
-        FROM sqlite_master
-        WHERE name = '#{table_name}'
-      }
+        ActiveRecord::Base.connection.select_one("SHOW CREATE TABLE #{quote_table_name(table_name)}")["Create Table"]
     end
 
     def migrate(table_name)
