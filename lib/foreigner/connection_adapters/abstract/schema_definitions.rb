@@ -61,16 +61,14 @@ module Foreigner
         #
         # ===== Examples
         # ====== Creating a simple foreign key
-        #  t.foreign_key(:people)
+        #  t.foreign_key(:person)
         # ====== Defining the column
-        #  t.foreign_key(:people, :column => :sender_id)
+        #  t.foreign_key(:person, :column => :sender_id)
         # ====== Specify cascading foreign key
-        #  t.foreign_key(:people, :dependent => :delete)
+        #  t.foreign_key(:person, :dependent => :delete)
         def foreign_key(to_table, options = {})
-          if @base.supports_foreign_keys?
-            to_table = to_table.to_s.pluralize if ActiveRecord::Base.pluralize_table_names
-            foreign_keys << ForeignKey.new(@base, to_table, options)
-          end
+          to_table = to_table.to_s.pluralize if ActiveRecord::Base.pluralize_table_names
+          foreign_keys << ForeignKey.new(@base, to_table, options)
         end
 
         def to_sql_with_foreign_keys
@@ -100,13 +98,13 @@ module Foreigner
         #
         # ===== Examples
         # ====== Creating a simple foreign key
-        #  t.foreign_key(:people)
+        #  t.foreign_key(:person)
         # ====== Defining the column
-        #  t.foreign_key(:people, :column => :sender_id)
+        #  t.foreign_key(:person, :column => :sender_id)
         # ====== Creating a named foreign key
-        #  t.foreign_key(:people, :column => :sender_id, :name => 'sender_foreign_key')
+        #  t.foreign_key(:person, :column => :sender_id, :name => 'sender_foreign_key')
         # ====== Defining the column of the +to_table+.
-        #  t.foreign_key(:people, :column => :sender_id, :primary_key => :person_id)
+        #  t.foreign_key(:person, :column => :sender_id, :primary_key => :person_id)
         def foreign_key(to_table, options = {})
           @base.add_foreign_key(@table_name, to_table, options)
         end

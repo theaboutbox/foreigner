@@ -3,7 +3,7 @@ class CreateCows < ActiveRecord::Migration
     create_table :cows do |t|
       t.string :name
       t.references :farm, :null => false
-      t.foreign_key :farms
+      t.foreign_key :farm
     end
   end
 

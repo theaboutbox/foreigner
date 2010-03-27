@@ -1,8 +1,17 @@
-require File.dirname(__FILE__) + '/helper'
+# ENV['RAILS_ENV'] ||= 'mysql'
+require File.dirname(__FILE__) + '/test_helper'
 require "foreigner/connection_adapters/mysql_adapter"
 
 class MysqlAdapterTest < ActiveRecord::TestCase
   include Foreigner::ConnectionAdapters::MysqlAdapter
+
+  # t.references :farm, :foreign_key => {:dependent => :delete}
+  def test_adding_books_to_the_farm_with_add_foreign_key_farms_books
+    premigrate
+    table = "cows"
+    migrate table
+    assert_match(/FOREIGN KEY \(\"farm_id\"\) REFERENCES \"farms\"\(id\) ON DELETE CASCADE/, schema(table))
+  end
 
   def test_add_without_options
     assert_equal(
@@ -81,5 +90,25 @@ class MysqlAdapterTest < ActiveRecord::TestCase
     def quote_table_name(name)
       quote_column_name(name).gsub('.', '`.`')
     end
+
+    def premigrate
+      migrate "farms"
+    end
+
+    def schema(table_name)
+      ActiveRecord::Base.connection.select_value %{
+        SELECT sql
+        FROM sqlite_master
+        WHERE name = '#{table_name}'
+      }
+    end
+
+    def migrate(table_name)
+      migration = "create_#{table_name}"
+      require "app_root/db/migrate/#{migration}"
+      migration.camelcase.constantize.up
+      assert ActiveRecord::Base.connection.table_exists?(table_name)
+    end
+
 end
 
