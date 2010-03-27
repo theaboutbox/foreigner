@@ -80,24 +80,29 @@ Therefore you must add your foreign keys when you define your table,
 which may involve editing existing migration files instead of generating new ones
 
 h2. Installation
+
 h3. Rails 3
+
 Add the following to your Gemfile:
 <pre>gem "dwilkie-foreigner", :require => "foreigner"</pre>
 Then run
 <pre>bundle install</pre>
 
 h3. Rails 2.3.x
+
 Add the following to environment.rb:
 <pre>config.gem "dwilkie-foreigner", :lib => "foreigner"</pre>
 Then run:
 <pre>sudo rake gems:install</pre>
 
 h2. Post Install
+
 To enable foreign keys you also need to add a file which
 includes the line <pre>Foreigner.enable</pre> in your config/initializers directory
 You can call this file whatever you want e.g. foreigner.rb
 
 h2. Testing
+
 There are built in tests for Mysql and SQLite3
 In order to run them you need to install "Plugin Test Helper":http://github.com/pluginaweek/plugin_test_helper
 
