@@ -54,7 +54,7 @@ Here's another example using a different column name and the dependent option
 <pre>
   create_table :comments do |t|
     t.integer :article_id, :null => false
-    t.foreign_key :post, :column => :h2. Some More Examplesarticle_id, :dependent => :nullify
+    t.foreign_key :post, :column => :article_id, :dependent => :nullify
   end
 </pre>
 
