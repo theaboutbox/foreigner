@@ -37,8 +37,21 @@ module AdapterHelper
   class PostgreSQLTestAdapter < AdapterTester
     include Foreigner::ConnectionAdapters::PostgreSQLAdapter
 
+    def foreign_keys(table)
+      ActiveRecord::Base.connection.foreign_keys(table)
+    end
+
     def recreate_test_environment
-      super(:postgresql)
+      ActiveRecord::Base.establish_connection(CONFIGURATIONS[:postgresql_admin])
+      @database = CONFIGURATIONS[:postgresql][:database]
+
+      ActiveRecord::Base.connection.drop_database(@database)
+      ActiveRecord::Base.connection.create_database(@database)
+
+      ActiveRecord::Base.connection.disconnect!
+      ActiveRecord::Base.establish_connection(CONFIGURATIONS[:postgresql])
+
+      FactoryHelpers::CreateCollection.up
     end
   end
 
