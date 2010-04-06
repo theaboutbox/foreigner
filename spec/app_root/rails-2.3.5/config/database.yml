@@ -1,0 +1,19 @@
+test_postgresql:
+  adapter: postgresql
+  database: foreigner_dev
+  username: root
+  password: 
+  host: localhost
+  
+test_mysql:
+  adapter: mysql
+  database: foreigner_dev
+  username: root
+  password: 
+  host: localhost
+
+test_sqlite3:
+  adapter: sqlite3
+  database: db/test.sqlite3
+  pool: 5
+  timeout: 5000
