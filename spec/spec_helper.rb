@@ -2,7 +2,7 @@
 
 # Load the plugin testing framework
 require 'rubygems'
-require File.expand_path('../spec/spec_sandbox', File.dirname(__FILE__))
+#require File.expand_path('../spec/spec_sandbox', File.dirname(__FILE__))
 
 # require 'plugin_test_helper'
 #

@@ -1,4 +1,3 @@
-require 'plugin_test_helper/plugin_locator'
 
 module PluginTestHelper
   module Extensions #:nodoc:
