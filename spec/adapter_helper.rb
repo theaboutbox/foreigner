@@ -34,6 +34,14 @@ module AdapterHelper
 
   end
 
+  class PostgreSQLTestAdapter < AdapterTester
+    include Foreigner::ConnectionAdapters::PostgreSQLAdapter
+
+    def recreate_test_environment
+      super(:mysql)
+    end
+  end
+
   class MySQLTestAdapter < AdapterTester
     include Foreigner::ConnectionAdapters::MysqlAdapter
 

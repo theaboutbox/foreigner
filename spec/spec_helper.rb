@@ -3,9 +3,11 @@ require 'rubygems'
 
 require 'active_support'
 require 'active_record'
+require 'active_record/connection_adapters/postgresql_adapter'
 require 'active_record/connection_adapters/sqlite3_adapter'
 require 'active_record/connection_adapters/mysql_adapter'
 require 'foreigner'
+require "foreigner/connection_adapters/postgresql_adapter"
 require "foreigner/connection_adapters/mysql_adapter"
 require "foreigner/connection_adapters/sqlite3_adapter"
 
