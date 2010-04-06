@@ -34,12 +34,14 @@ describe Foreigner::ConnectionAdapters::SQLite3Adapter do
       @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\"#{@column}\"\) REFERENCES \"collections\"\s*\(id\)/)
     end
 
-    # t.foreign_key :farm, :dependent => :nullify
-    xit 'should accept :dependent => :nullify' do
-      premigrate
-      table = "bears"
-      migrate table
-      assert_match(/FOREIGN KEY \(\"farm_id\"\) REFERENCES \"farms\"\(id\) ON DELETE SET NULL/, schema(table))
+    it 'should accept :dependent => :nullify' do
+      create_table :items do |t|
+        t.string :name
+        t.references :collection
+        t.foreign_key :collection, :dependent => :nullify
+      end     
+
+      @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\"collection_id\"\) REFERENCES \"collections\"\s*\(id\) ON DELETE SET NULL/)
     end
 
     # t.foreign_key :farm, :dependent => :delete
