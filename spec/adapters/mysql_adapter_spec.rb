@@ -78,12 +78,13 @@ describe 'MySQL Adapter' do
       @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\`collection_id\`\) REFERENCES \`collections\`\s*\(\`id\`\)/)
     end
 
-    # t.references :farm, :foreign_key => {:dependent => :nullify}
-    xit 'should accept :foreign_key => { :dependent => :nullify }' do
-      premigrate
-      table = "tigers"
-      migrate table
-      assert_match(/FOREIGN KEY\s*\(\`farm_id\`\) REFERENCES \`farms\`\s*\(\`id\`\) ON DELETE SET NULL/, schema(table))
+    it 'should accept :foreign_key => { :dependent => :nullify }' do
+      create_table :items do |t|
+        t.string :name
+        t.references :collection, :foreign_key => {:dependent => :nullify}
+      end
+
+      @adapter.schema(:items).match(/FOREIGN KEY\s*\(\`collection_id\`\) REFERENCES \`collections\`\s*\(\`id\`\) ON DELETE SET NULL/)
     end
 
     # t.references :farm, :foreign_key => {:dependent => :delete}
