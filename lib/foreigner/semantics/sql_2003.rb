@@ -18,35 +18,59 @@ module Foreigner
         column  = options[:column] || "#{to_table.to_s.singularize}_id"
         foreign_key_name = foreign_key_name(from_table, column, options)
         primary_key = options[:primary_key] || "id"
-        dependency = dependency_sql(options[:dependent])
+        reference = sql_for_reference(to_table, primary_key)
+        dependency = sql_for_dependency(options[:dependent])
 
-        sql =
-          "ALTER TABLE #{quote_table_name(from_table)} " +
-          "ADD CONSTRAINT #{quote_column_name(foreign_key_name)} " +
-          "FOREIGN KEY (#{quote_column_name(column)}) " +
-          "REFERENCES #{quote_table_name(ActiveRecord::Migrator.proper_table_name(to_table))}(#{primary_key})"
+        execute(sql_for_add_foreign_key(from_table, foreign_key_name, column, reference, dependency))
+      end
 
-        sql << " #{dependency}" unless dependency.blank?
+      def remove_foreign_key(table, options)
+        foreign_key_name = if Hash === options
+          foreign_key_name(table, options[:column], options)
+        else
+          foreign_key_name(table, "#{options.to_s.singularize}_id")
+        end
 
-        execute(sql)
+        execute(sql_for_remove_foreign_key(table, foreign_key_name))
       end
 
       private
-        def foreign_key_name(table, column, options = {})
-          if options[:name]
-            options[:name]
-          else
-            "#{table}_#{column}_fk"
-          end
-        end
+      
+      def foreign_key_name(table, column, options = {})
+        return options[:name] if options[:name]
+        "fk_#{table}_#{column}"
+      end
+      
+      # Generates SQL and returns it. 
+      def sql_for_add_foreign_key(from_table, foreign_key_name, column, reference, dependent = nil)
+        sql = [
+          "ALTER TABLE #{quote_table_name(from_table)}",
+          "ADD CONSTRAINT #{quote_column_name(foreign_key_name)}",
+          "FOREIGN KEY (#{quote_column_name(column)})",
+          "REFERENCES #{reference}"
+        ]
 
-        def dependency_sql(dependency)
-          case dependency
-            when :nullify then "ON DELETE SET NULL"
-            when :delete  then "ON DELETE CASCADE"
-            else ""
-          end
+        sql << "#{dependent}" unless dependent.blank?
+        sql.join(' ')
+      end
+
+      def sql_for_remove_foreign_key(table, foreign_key_name)
+        "ALTER TABLE #{quote_table_name(table)} DROP CONSTRAINT #{quote_column_name(foreign_key_name)}"
+      end
+
+      def sql_for_reference(to_table, primary_key)
+        "#{quote_table_name(ActiveRecord::Migrator.proper_table_name(to_table))}(#{primary_key})"
+      end
+
+
+      def sql_for_dependency(dependency)
+        case dependency
+          when :nullify then 'ON DELETE SET NULL'
+          when :delete  then 'ON DELETE CASCADE'
+          else ''
         end
+      end
+
     end
   end
 end

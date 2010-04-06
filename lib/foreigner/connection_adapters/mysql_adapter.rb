@@ -3,16 +3,12 @@ module Foreigner
     module MysqlAdapter
       include Foreigner::Semantics::Sql2003
       
-      def remove_foreign_key(table, options)
-        if Hash === options
-          foreign_key_name = foreign_key_name(table, options[:column], options)
-        else
-          foreign_key_name = foreign_key_name(table, "#{options.to_s.singularize}_id")
-        end
-
-        execute "ALTER TABLE #{quote_table_name(table)} DROP FOREIGN KEY #{quote_column_name(foreign_key_name)}"
-      end
       
+      # Override SQL2003 Semantics for MySQL
+      def sql_for_remove_foreign_key(table, foreign_key_name)
+        "ALTER TABLE #{quote_table_name(table)} DROP FOREIGN KEY #{quote_column_name(foreign_key_name)}"
+      end
+
       def foreign_keys(table_name)
         fk_info = select_all %{
           SELECT fk.referenced_table_name as 'to_table'
