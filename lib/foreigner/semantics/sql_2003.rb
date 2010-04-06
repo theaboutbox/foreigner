@@ -1,5 +1,5 @@
 module Foreigner
-  module ConnectionAdapters
+  module Semantics
     module Sql2003
       def supports_foreign_keys?
         true
