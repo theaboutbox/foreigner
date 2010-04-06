@@ -1,16 +1,15 @@
 require 'rake'
 require 'rake/testtask'
 require 'rake/rdoctask'
+require 'spec/rake/spectask'
 
-desc 'Default: run unit tests.'
-task :default => :test
+desc 'Default: run specs.'
+task :default => :spec
 
-desc 'Test the foreigner plugin.'
-Rake::TestTask.new(:test) do |t|
-  t.libs << 'lib'
-  t.libs << 'test'
-  t.pattern = 'test/**/*_test.rb'
-  t.verbose = true
+desc 'Run the specs'
+Spec::Rake::SpecTask.new(:spec) do |t|
+    t.spec_opts = ['--colour --format progress --loadby mtime --reverse']
+      t.spec_files = FileList['spec/**/*_spec.rb']
 end
 
 desc 'Generate documentation for the foreigner plugin.'
@@ -26,11 +25,11 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gemspec|
     gemspec.name = "dwilkie-foreigner"
-    gemspec.summary = "Foreign keys for Rails migrations with SQLite support"
+    gemspec.summary = "Foreign keys for Rails migrations for PostgreSQL, MySQL and Sqlite3. Based on dwilkie-foreigner"
     gemspec.description = "Allows you to add foreign keys to your migrations and enforce them"
-    gemspec.email = "dwilkie@gmail.com"
-    gemspec.homepage = "http://github.com/dwilkie/foreigner"
-    gemspec.authors = ["David Wilkie"]
+    gemspec.email = "hosh@sparkfly.com"
+    gemspec.homepage = "http://github.com/hosh/foreigner"
+    gemspec.authors = ["Ho-Sheng Hsiao"]
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
