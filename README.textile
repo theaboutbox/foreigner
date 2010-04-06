@@ -1,39 +1,32 @@
-h1. dwilkie Foreigner
+h1. Sparkfly Foreigner
 
-dwilkie-foreigner is a fork of "Matt Higgins Foreigner":http://github.com/matthuhiggins/foreigner/
-which supports adding AND enforcing foreign key constraints on SQLite3 databases.
+sparkfly-foreigner is a fork of "Matt Higgins Foreigner":http://github.com/matthuhiggins/foreigner/ and the "dwilkie-foreigner":http://github.com/dwilkie/foreigner
 
-It also allows you to do the following in your migration files (not supported by matt higgins foreigner)
-<pre>
-  create_table :comments do |t|
-    t.references :post, :foreign_key => true, :null => false
-  end
-</pre>
+Sparkfly requires an enterprise-ready Rails environment, which means we need solid PostgreSQL support and referential integrity.
+Further, all of our plugins must be thoroughly tested. To make sure that PostgreSQL support is where we want it to be, the work
+done by Matt Higgins and D. Wilkie were forked and all the tests were converted to use rspec. Dependency on plugin_test_helper
+was taken out. 
 
-h2. Enforcing constraints in SQLite3
+These tests were created and tested against our target platform, Rails 2.3.5. Support for Rails 3 will come in the future
+when we actually move our platform to Rails 3.
 
-SQLite3 does not enforce database constraints out of the box
-This provides you with the flexibility in choosing whether or not to enforce
-constraints at the DB level or not.
+PostgreSQL (tested against 8.3.9)
+ - "Schema" tests: do the table migrations actually add referential integrity?
+ - "Semantics" tests: do the add/drop constraints emit proper SQL?
 
-In order to enforce your constraints:
-Rails 3
-<pre>
-  rails dbconsole
-  .genfkey --exec
-</pre>
+MySQL (tested against 5.0.90 / Gentoo mysql-5.0.90-r2 hardened x86_64)
+ - "Schema" tests: do the table migrations actually add referential integrity?
+ - "Semantics" tests: do the add/drop constraints emit proper SQL?
 
-Rails 2.3.x
-<pre>
-  script/dbconsole
-  .genfkey --exec
-</pre>
+SQLite3 (tested against 3.6.22 in-memory only)
+ - "Semantics" tests: do the add/drop constraints emit proper SQL?
 
-While your in the db console run: <pre>.schema</pre> to see your constraints implemented as triggers
+TODO:
+ - Schema Dumper rspec
+ - CHECK Constraints (PostgreSQL-only)
+ - CHECK Constraints implemented as triggers for MySQL. This is unlikely to be supported since we don't plan to deploy to MySQL
 
-Now when you try and remove a model with an association in Rails with sqlite3 you will get a database exception!
-
-h2. Some More Examples
+h2. Usage 
 
 To specify a different column name you can do the following:
 <pre>
@@ -58,6 +51,15 @@ Here's another example using a different column name and the dependent option
   end
 </pre>
 
+To specify a reference with a foreign key constraint using Rails convention:
+<pre>
+  create_table :comments do |t|
+    t.references :post, :foreign_key => true, :null => false
+  end
+</pre>
+
+Read the specs for more example usage.
+
 h2. schema.rb
 
 All of the constrants are updated in schema.rb when you either:
@@ -68,43 +70,42 @@ All of the constrants are updated in schema.rb when you either:
 This allows you to see the state of your migratons and
 take advantage of using <pre>rake db:schema:load</pre>
 
-h2. Limitations
-
-Since SQLite3 does not have complete ALTER TABLE support you cannot use the following syntax when using an SQLite3 database:
-<pre>
-  add_foreign_key
-  remove_foreign_key
-</pre>
-
-Therefore you must add your foreign keys when you define your table,
-which may involve editing existing migration files instead of generating new ones
-
 h2. Installation
 
 h3. Rails 3
 
-Add the following to your Gemfile:
-<pre>gem "dwilkie-foreigner", :require => "foreigner"</pre>
-Then run
-<pre>bundle install</pre>
+- Have not tested any of these changes against Rails 3.
+- See the matthuhiggins-foreigner or dwilkie-foreigner if you want a Foreigner that plays nice with Rails 3. 
 
-h3. Rails 2.3.x
+h3. Rails 2.3.5
 
 Add the following to environment.rb:
-<pre>config.gem "dwilkie-foreigner", :lib => "foreigner"</pre>
+<pre>config.gem "sparkfly-foreigner", :lib => "foreigner"</pre>
 Then run:
 <pre>sudo rake gems:install</pre>
 
-h2. Post Install
+h2. Disabling Foreign Keys
 
-To enable foreign keys you also need to add a file which
-includes the line <pre>Foreigner.enable</pre> in your config/initializers directory
-You can call this file whatever you want e.g. foreigner.rb
+To disable foreign keys you, invoke:
+
+<pre>Foreigner.disable</pre>
+
+You can drop this into config/initializers
+
+NOTE: This is different from the default behavior of dwilkie-foreigner. We're assuming you are installing this 
+because you need referential integrity for your PostgreSQL-backed Rails application. Besides that, any testing
+should be done against PostgreSQL, not against SQLite3 in-memory.
 
 h2. Testing
 
-There are built in tests for Mysql and SQLite3
-In order to run them you need to install "Plugin Test Helper":http://github.com/pluginaweek/plugin_test_helper
+You will need rspec and possibly rspec-rails. Run "rake spec" to run all the spec. Make sure
+that all of the PostgreSQL and MySQL databases defined in spec/spec_helper.rb are created
+before you run those tests.
 
-Copyright (c) 2010 David Wilkie, released under the MIT license
+h2. Copyrights
+
+Copyright (c) 2010 Ho-Sheng Hsiao, released under the MIT license
+
+Modified from code written by David Wilkie and Matt Higgins. See http://github.com/sparkfly/foreigner for details on
+what got changed from what.
 
