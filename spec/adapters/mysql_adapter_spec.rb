@@ -36,7 +36,7 @@ describe 'MySQL Adapter' do
         t.foreign_key :collection
       end
 
-      @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\`collection_id\`\) REFERENCES \`collection\`\s*\(\`id\`\)/)
+      @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\`collection_id\`\) REFERENCES \`collections\`\s*\(\`id\`\)/)
     end
 
     # t.foreign_key :farm, :column => :shearing_farm_id

@@ -7,7 +7,7 @@ module Foreigner
 
       def foreign_key_definition(to_table, options = {})
         column  = options[:column] || "#{to_table.to_s.singularize}_id"
-        dependency = dependency_sql(options[:dependent])
+        dependency = sql_for_dependency(options[:dependent])
 
         sql = "FOREIGN KEY (#{quote_column_name(column)}) REFERENCES #{quote_table_name(to_table)}(id)"
         sql << " #{dependency}" unless dependency.blank?
