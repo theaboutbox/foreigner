@@ -24,7 +24,7 @@ end
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gemspec|
-    gemspec.name = "dwilkie-foreigner"
+    gemspec.name = "sparkfly-foreigner"
     gemspec.summary = "Foreign keys for Rails migrations for PostgreSQL, MySQL and Sqlite3. Based on dwilkie-foreigner"
     gemspec.description = "Allows you to add foreign keys to your migrations and enforce them"
     gemspec.email = "hosh@sparkfly.com"
