@@ -7,6 +7,7 @@ require 'active_record/connection_adapters/sqlite3_adapter'
 require 'active_record/connection_adapters/mysql_adapter'
 require 'foreigner'
 require "foreigner/connection_adapters/mysql_adapter"
+require "foreigner/connection_adapters/sqlite3_adapter"
 
 require File.expand_path('factory_helper.rb', File.dirname(__FILE__))
 require File.expand_path('adapter_helper.rb', File.dirname(__FILE__))

@@ -46,5 +46,27 @@ module AdapterHelper
     end
   end
 
+  class SQLite3TestAdapter < AdapterTester
+    include Foreigner::ConnectionAdapters::SQLite3Adapter
+
+    def schema(table_name) ActiveRecord::Base.connection.select_value %{
+        SELECT sql
+        FROM sqlite_master
+        WHERE name = '#{table_name}'
+      }
+    end
+
+    def recreate_test_environment
+      ActiveRecord::Base.establish_connection(CONFIGURATIONS[:sqlite3])
+
+      @database = CONFIGURATIONS[:sqlite3][:database]
+      #ActiveRecord::Base.connection.drop_database(@database)
+      #ActiveRecord::Base.connection.create_database(@database)
+      ActiveRecord::Base.connection.reset!
+
+      FactoryHelpers::CreateCollection.up
+    end
+  end
+
 
 end

@@ -34,7 +34,7 @@ describe Foreigner::ConnectionAdapters::MysqlAdapter do
       @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\`#{@column}\`\) REFERENCES \`collections\`\s*\(\`id\`\)/)
     end
 
-    it 'should accept :depenent => :nullify' do
+    it 'should accept :dependent => :nullify' do
       create_table :items do |t|
         t.string :name
         t.references :collection
