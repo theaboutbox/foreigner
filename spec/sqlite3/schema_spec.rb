@@ -12,13 +12,14 @@ describe Foreigner::ConnectionAdapters::SQLite3Adapter do
   end
 
   describe 'when creating tables with t.foreign_key' do
+    it 'should understand t.foreign_key' do
+      create_table :items do |t|
+        t.string :name
+        t.references :collection, :null => false
+        t.foreign_key :collection
+      end
 
-    # t.foreign_key :farm
-    xit 'should understand t.foreign_key' do
-      premigrate
-      table = "cows"
-      migrate table
-      assert_match(/FOREIGN KEY \(\"farm_id\"\) REFERENCES \"farms\"\(id\)/, schema(table))
+      @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\"collection_id\"\) REFERENCES \"collections\"\s*\(id\)/)
     end
 
     # t.foreign_key :farm, :column => :shearing_farm_id
