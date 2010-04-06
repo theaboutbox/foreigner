@@ -2,18 +2,16 @@ ENV['RAILS_ENV'] ||= 'test_mysql'
 
 require File.expand_path('../spec_helper.rb', File.dirname(__FILE__))
 
-describe 'MySQL Adapter' do
+describe Foreigner::ConnectionAdapters::MysqlAdapter do
   include MigrationFactory
 
   before(:each) do 
     @adapter = AdapterHelper::MySQLTestAdapter.new
+    @adapter.recreate_test_environment
   end
 
-  describe 'when creating tables' do 
-    before(:each) do
-      @adapter.recreate_test_environment
-    end
-    
+  describe 'when creating tables with t.foreign_key' do 
+
     it 'should understand t.foreign_key ' do
       create_table :items do |t|
         t.string :name
@@ -25,11 +23,11 @@ describe 'MySQL Adapter' do
     end
 
     it 'should accept a :column parameter' do
-      @column = :item_farm_id
+      @column = :item_collection_id
 
       create_table :items do |t|
         t.string :name
-        t.integer :item_farm_id
+        t.integer @column
         t.foreign_key :collection, :column => @column
       end
 
@@ -42,7 +40,7 @@ describe 'MySQL Adapter' do
         t.references :collection
         t.foreign_key :collection, :dependent => :nullify
       end     
-      
+
       @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\`collection_id\`\) REFERENCES \`collections\`\s*\(\`id\`\) ON DELETE SET NULL/)
     end
 
@@ -55,6 +53,9 @@ describe 'MySQL Adapter' do
 
       @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\`collection_id\`\) REFERENCES \`collections\`\s*\(\`id\`\) ON DELETE CASCADE/)
     end
+  end
+
+  describe 'when creating tables with t.reference' do
 
     it 'should accept a t.references constraint' do
       create_table :items do |t|
