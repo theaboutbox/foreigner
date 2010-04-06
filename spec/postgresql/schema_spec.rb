@@ -40,14 +40,19 @@ describe Foreigner::ConnectionAdapters::PostgreSQLAdapter do
       foreign_key.options[:dependent].should be_nil
     end
 
-    xit 'should accept :dependent => :nullify' do
+    it 'should accept :dependent => :nullify' do
+      @dependent = :nullify
       create_table :items do |t|
         t.string :name
         t.references :collection
-        t.foreign_key :collection, :dependent => :nullify
+        t.foreign_key :collection, :dependent => @dependent
       end     
 
-      @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\`collection_id\`\) REFERENCES \`collections\`\s*\(\`id\`\) ON DELETE SET NULL/)
+      foreign_key = @adapter.foreign_keys(:items)[0]
+      foreign_key.to_table.should eql('collections')
+      foreign_key.options[:primary_key].should eql('id')
+      foreign_key.options[:column].should eql('collection_id')
+      foreign_key.options[:dependent].should eql(@dependent)
     end
 
     xit 'should accept :dependent => :delete' do
