@@ -10,14 +10,18 @@ describe Foreigner::ConnectionAdapters::PostgreSQLAdapter do
 
   describe 'when creating tables with t.foreign_key' do 
 
-    xit 'should understand t.foreign_key' do
+    it 'should understand t.foreign_key' do
       create_table :items do |t|
         t.string :name
         t.references :collection, :null => false
         t.foreign_key :collection
       end
 
-      @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\`collection_id\`\) REFERENCES \`collections\`\s*\(\`id\`\)/)
+      foreign_key = @adapter.foreign_keys(:items)[0]
+      foreign_key.to_table.should eql('collections')
+      foreign_key.options[:primary_key].should eql('id')
+      foreign_key.options[:column].should eql('collection_id')
+      foreign_key.options[:dependent].should be_nil
     end
 
     xit 'should accept a :column parameter' do
