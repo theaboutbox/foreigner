@@ -56,14 +56,13 @@ describe Foreigner::ConnectionAdapters::SQLite3Adapter do
   end
 
   describe 'when creating tables with t.reference' do
+    it 'should accept a t.references constraint' do
+      create_table :items do |t|
+        t.string :name
+        t.references :collection, :foreign_key => true
+      end
 
-    # t.references :farm, :foreign_key => :true
-    xit 'should accept a t.references constraint' do
-
-      premigrate
-      table = "pigs"
-      migrate table
-      assert_match(/FOREIGN KEY \(\"farm_id\"\) REFERENCES \"farms\"\(id\)/, schema(table))
+      @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\"collection_id\"\) REFERENCES \"collections\"\s*\(id\)/)
     end
 
     # t.references :farm, :foreign_key => {:dependent => :nullify}
