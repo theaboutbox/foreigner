@@ -38,7 +38,7 @@ module AdapterHelper
     include Foreigner::ConnectionAdapters::PostgreSQLAdapter
 
     def recreate_test_environment
-      super(:mysql)
+      super(:postgresql)
     end
   end
 
