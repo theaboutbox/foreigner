@@ -84,18 +84,6 @@ Add the following to environment.rb:
 Then run:
 <pre>sudo rake gems:install</pre>
 
-h2. Disabling Foreign Keys
-
-To disable foreign keys you, invoke:
-
-<pre>Foreigner.disable</pre>
-
-You can drop this into config/initializers
-
-NOTE: This is different from the default behavior of dwilkie-foreigner. We're assuming you are installing this 
-because you need referential integrity for your PostgreSQL-backed Rails application. Besides that, any testing
-should be done against PostgreSQL, not against SQLite3 in-memory.
-
 h2. Testing
 
 You will need rspec and possibly rspec-rails. Run "rake spec" to run all the spec. Make sure
