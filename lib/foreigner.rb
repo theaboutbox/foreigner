@@ -11,31 +11,48 @@ module Foreigner
     def register(adapter_name, file_name)
       adapters[adapter_name] = file_name
     end
-
-    def load_adapter!(adapter_name)
-      if adapters.key?(adapter_name)
-        require adapters[adapter_name]
+  
+    def load_adapter!
+      if adapters.key?(configured_adapter)
+        require adapters[configured_adapter]
       end
     end
-
-    def enable
-      Foreigner.load_adapter! ActiveRecord::Base.connection_pool.spec.config[:adapter].downcase
+    
+    def configured_adapter
+      ActiveRecord::Base.connection.adapter_name.downcase
     end
-  end
-end
-
-module ActiveRecord
-  module ConnectionAdapters
-    include Foreigner::ConnectionAdapters::SchemaStatements
-    include Foreigner::ConnectionAdapters::SchemaDefinitions
-  end
-
-  SchemaDumper.class_eval do
-    include Foreigner::SchemaDumper
+    
+    def on_load(&block)
+      if defined?(Rails) && Rails.version >= '3.0'
+        ActiveSupport.on_load :active_record do
+          unless ActiveRecord::Base.connected?
+            ActiveRecord::Base.configurations = Rails.application.config.database_configuration
+            ActiveRecord::Base.establish_connection
+          end
+          block.call
+        end
+      else
+        yield
+      end
+    end
   end
 end
 
 Foreigner.register 'mysql', 'foreigner/connection_adapters/mysql_adapter'
-Foreigner.register 'postgresql', 'foreigner/connection_adapters/postgresql_adapter'
 Foreigner.register 'sqlite3', 'foreigner/connection_adapters/sqlite3_adapter'
+Foreigner.register 'postgresql', 'foreigner/connection_adapters/postgresql_adapter'
 
+Foreigner.on_load do
+  module ActiveRecord
+    module ConnectionAdapters
+      include Foreigner::ConnectionAdapters::SchemaStatements
+      include Foreigner::ConnectionAdapters::SchemaDefinitions
+    end
+
+    SchemaDumper.class_eval do
+      include Foreigner::SchemaDumper
+    end
+  end
+  
+  Foreigner.load_adapter! if ActiveRecord::Base.connected?
+end
