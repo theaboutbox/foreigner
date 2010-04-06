@@ -27,10 +27,9 @@ describe 'MySQL Adapter' do
       @adapter.recreate_test_environment
     end
     
-    # t.foreign_key :farm
     it 'should understand t.foreign_key ' do
 
-      create_table do |t|
+      create_table :items do |t|
         t.string :name
         t.references :collection, :null => false
         t.foreign_key :collection
@@ -39,12 +38,16 @@ describe 'MySQL Adapter' do
       @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\`collection_id\`\) REFERENCES \`collections\`\s*\(\`id\`\)/)
     end
 
-    # t.foreign_key :farm, :column => :shearing_farm_id
-    xit 'should accept a :column parameter' do
-      premigrate
-      table = "sheep"
-      migrate table
-      assert_match(/FOREIGN KEY\s*\(\`shearing_farm_id\`\) REFERENCES \`farms\`\s*\(\`id\`\)/, schema(table))
+    it 'should accept a :column parameter' do
+      @column = :item_farm_id
+
+      create_table :items do |t|
+        t.string :name
+        t.integer :item_farm_id
+        t.foreign_key :collection, :column => @column
+      end
+
+      @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\`#{@column}\`\) REFERENCES \`collections\`\s*\(\`id\`\)/)
     end
 
     # t.foreign_key :farm, :dependent => :nullify
