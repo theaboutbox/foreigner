@@ -24,7 +24,7 @@ describe Foreigner::ConnectionAdapters::PostgreSQLAdapter do
       foreign_key.options[:dependent].should be_nil
     end
 
-    xit 'should accept a :column parameter' do
+    it 'should accept a :column parameter' do
       @column = :item_collection_id
 
       create_table :items do |t|
@@ -33,7 +33,11 @@ describe Foreigner::ConnectionAdapters::PostgreSQLAdapter do
         t.foreign_key :collection, :column => @column
       end
 
-      @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\`#{@column}\`\) REFERENCES \`collections\`\s*\(\`id\`\)/)
+      foreign_key = @adapter.foreign_keys(:items)[0]
+      foreign_key.to_table.should eql('collections')
+      foreign_key.options[:primary_key].should eql('id')
+      foreign_key.options[:column].should eql(@column.to_s)
+      foreign_key.options[:dependent].should be_nil
     end
 
     xit 'should accept :dependent => :nullify' do
