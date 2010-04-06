@@ -1,5 +1,3 @@
-ENV['RAILS_ENV'] ||= 'test_mysql'
-
 require File.expand_path('../spec_helper.rb', File.dirname(__FILE__))
 
 describe Foreigner::ConnectionAdapters::MysqlAdapter do
