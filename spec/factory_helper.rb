@@ -44,7 +44,7 @@ module MigrationFactory
     migration = create_migration do
       create_table(table, &blk)
     end
-    migration.up
+    migration.up 
   end
 
 end
