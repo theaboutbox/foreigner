@@ -10,7 +10,7 @@ describe Foreigner::ConnectionAdapters::MysqlAdapter do
 
   describe 'when creating tables with t.foreign_key' do 
 
-    it 'should understand t.foreign_key ' do
+    it 'should understand t.foreign_key' do
       create_table :items do |t|
         t.string :name
         t.references :collection, :null => false
