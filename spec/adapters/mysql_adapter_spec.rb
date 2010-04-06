@@ -69,12 +69,13 @@ describe 'MySQL Adapter' do
       @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\`collection_id\`\) REFERENCES \`collections\`\s*\(\`id\`\) ON DELETE CASCADE/)
     end
 
-    # t.references, :foreign_key => true
-    xit 'should accept a t.references constraint' do
-      premigrate
-      table = "pigs"
-      migrate table
-      assert_match(/FOREIGN KEY\s*\(\`farm_id\`\) REFERENCES \`farms\`\s*\(\`id\`\)/, schema(table))
+    it 'should accept a t.references constraint' do
+      create_table :items do |t|
+        t.string :name
+        t.references :collection, :foreign_key => true
+      end
+
+      @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\`collection_id\`\) REFERENCES \`collections\`\s*\(\`id\`\)/)
     end
 
     # t.references :farm, :foreign_key => {:dependent => :nullify}
