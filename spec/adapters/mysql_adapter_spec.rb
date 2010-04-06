@@ -28,7 +28,6 @@ describe 'MySQL Adapter' do
     end
     
     it 'should understand t.foreign_key ' do
-
       create_table :items do |t|
         t.string :name
         t.references :collection, :null => false
@@ -51,7 +50,6 @@ describe 'MySQL Adapter' do
     end
 
     it 'should accept :depenent => :nullify' do
-
       create_table :items do |t|
         t.string :name
         t.references :collection
@@ -61,12 +59,14 @@ describe 'MySQL Adapter' do
       @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\`collection_id\`\) REFERENCES \`collections\`\s*\(\`id\`\) ON DELETE SET NULL/)
     end
 
-    # t.foreign_key :farm, :dependent => :delete
-    xit 'should accept :dependent => :delete' do
-      premigrate
-      table = "elephants"
-      migrate table
-      assert_match(/FOREIGN KEY\s*\(\`farm_id\`\) REFERENCES \`farms\`\s*\(\`id\`\) ON DELETE CASCADE/, schema(table))
+    it 'should accept :dependent => :delete' do
+      create_table :items do |t|
+        t.string :name
+        t.references :collection
+        t.foreign_key :collection, :dependent => :delete
+      end     
+
+      @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\`collection_id\`\) REFERENCES \`collections\`\s*\(\`id\`\) ON DELETE CASCADE/)
     end
 
     # t.references, :foreign_key => true
