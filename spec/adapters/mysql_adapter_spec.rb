@@ -3,53 +3,40 @@ ENV['RAILS_ENV'] ||= 'test_mysql'
 require File.expand_path('../spec_helper.rb', File.dirname(__FILE__))
 require "foreigner/connection_adapters/mysql_adapter"
 
-class TestAdapter
+class MySQLTestAdapter < AdapterTester
   include Foreigner::ConnectionAdapters::MysqlAdapter
-  private
-    def execute(sql, name = nil)
-      sql
-    end
 
-    def quote_column_name(name)
-      "`#{name}`"
-    end
+  def schema(table_name)
+    ActiveRecord::Base.connection.select_one("SHOW CREATE TABLE #{quote_table_name(table_name)}")["Create Table"]
+  end
 
-    def quote_table_name(name)
-      quote_column_name(name).gsub('.', '`.`')
-    end
-
-    def premigrate
-      @database = ActiveRecord::Base.configurations['mysql']['database']
-      ActiveRecord::Base.connection.drop_database(@database)
-      ActiveRecord::Base.connection.create_database(@database)
-      ActiveRecord::Base.connection.reset!
-      migrate "farms"
-    end
-
-    def schema(table_name)
-        ActiveRecord::Base.connection.select_one("SHOW CREATE TABLE #{quote_table_name(table_name)}")["Create Table"]
-    end
-
-    def migrate(table_name)
-      migration = "create_#{table_name}"
-      require "app_root/db/migrate/#{migration}"
-      migration.camelcase.constantize.up
-      assert ActiveRecord::Base.connection.table_exists?(table_name)
-    end
+  def recreate_test_environment
+    super(:mysql)
+  end
 end
 
 describe 'MySQL Adapter' do
+  include MigrationFactory
+
   before(:each) do 
-    @adapter = TestAdapter.new
+    @adapter = MySQLTestAdapter.new
   end
 
   describe 'when creating tables' do 
+    before(:each) do
+      @adapter.recreate_test_environment
+    end
+    
     # t.foreign_key :farm
-    xit 'should understand t.foreign_key ' do
-      premigrate
-      table = "cows"
-      migrate table
-      assert_match(/FOREIGN KEY\s*\(\`farm_id\`\) REFERENCES \`farms\`\s*\(\`id\`\)/, schema(table))
+    it 'should understand t.foreign_key ' do
+
+      create_table do |t|
+        t.string :name
+        t.references :collection, :null => false
+        t.foreign_key :collection
+      end
+
+      @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\`collection_id\`\) REFERENCES \`collection\`\s*\(\`id\`\)/)
     end
 
     # t.foreign_key :farm, :column => :shearing_farm_id
