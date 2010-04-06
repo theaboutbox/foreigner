@@ -1,7 +1,7 @@
 module Foreigner
   module ConnectionAdapters
     module MysqlAdapter
-      include Foreigner::ConnectionAdapters::Sql2003
+      include Foreigner::Semantics::Sql2003
       
       def remove_foreign_key(table, options)
         if Hash === options

@@ -3,7 +3,7 @@ require 'foreigner/connection_adapters/sql_2003'
 module Foreigner
   module ConnectionAdapters
     module SQLite3Adapter
-      include Foreigner::ConnectionAdapters::Sql2003
+      include Foreigner::Semantics::Sql2003
 
       def foreign_keys(table_name)
         foreign_keys = []
