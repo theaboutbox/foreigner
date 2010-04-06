@@ -22,12 +22,16 @@ describe Foreigner::ConnectionAdapters::SQLite3Adapter do
       @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\"collection_id\"\) REFERENCES \"collections\"\s*\(id\)/)
     end
 
-    # t.foreign_key :farm, :column => :shearing_farm_id
-    xit 'should accept a :column parameter' do
-      premigrate
-      table = "sheep"
-      migrate table
-      assert_match(/FOREIGN KEY \(\"shearing_farm_id\"\) REFERENCES \"farms\"\(id\)/, schema(table))
+    it 'should accept a :column parameter' do
+      @column = :item_collection_id
+
+      create_table :items do |t|
+        t.string :name
+        t.integer @column
+        t.foreign_key :collection, :column => @column
+      end
+
+      @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\"#{@column}\"\) REFERENCES \"collections\"\s*\(id\)/)
     end
 
     # t.foreign_key :farm, :dependent => :nullify
