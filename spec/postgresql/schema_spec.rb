@@ -73,13 +73,17 @@ describe Foreigner::ConnectionAdapters::PostgreSQLAdapter do
 
   describe 'when creating tables with t.reference' do
 
-    xit 'should accept a t.references constraint' do
+    it 'should accept a t.references constraint' do
       create_table :items do |t|
         t.string :name
         t.references :collection, :foreign_key => true
       end
 
-      @adapter.schema(:items).should match(/FOREIGN KEY\s*\(\`collection_id\`\) REFERENCES \`collections\`\s*\(\`id\`\)/)
+      foreign_key = @adapter.foreign_keys(:items)[0]
+      foreign_key.to_table.should eql('collections')
+      foreign_key.options[:primary_key].should eql('id')
+      foreign_key.options[:column].should eql('collection_id')
+      foreign_key.options[:dependent].should be_nil
     end
 
     xit 'should accept :foreign_key => { :dependent => :nullify }' do
