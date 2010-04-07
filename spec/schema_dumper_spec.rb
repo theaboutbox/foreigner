@@ -85,7 +85,12 @@ describe Foreigner::SchemaDumper do
     )
   end
 
-  it 'should generate with a :dependent => :delete'
+  it 'should generate with a :dependent => :delete' do
+    @dependent = :delete
+    @dumper.generate_schema_statement(:dependent => @dependent).should match(
+      /\s*add_foreign_key\s+:items,\s:collections,\s+:dependent\s+=>\s+#{@dependent.inspect}/
+    )
+  end
 
 end
 
