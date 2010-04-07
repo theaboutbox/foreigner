@@ -44,7 +44,18 @@ describe Foreigner::ConnectionAdapters::PostgreSQLAdapter do
       foreign_key_names.should be_include('owners')
     end
 
-    it 'should extract referencing table'
+    it 'should extract referencing table' do
+      create_table :items do |t|
+        t.string :name
+        t.references :collection, :null => false
+        t.foreign_key :collection
+      end
+
+      @adapter.foreign_keys(:items).length.should eql(1)
+      foreign_key = @adapter.foreign_keys(:items)[0]
+      foreign_key.from_table.should eql('items')
+    end
+
     it 'should extract foreign table'
     it 'should extract foreign key name'
     it 'should extract foreign column'
