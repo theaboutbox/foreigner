@@ -56,7 +56,9 @@ describe Foreigner::SchemaDumper do
     )
   end
 
+  it 'should ignore custom column id conforming to Rails convention'
   it 'should generate with a custom primary key'
+  it 'should ignore custom primary key conforming to Rails convention'
   it 'should generate with a :dependent => :nullify'
   it 'should generate with a :dependent => :delete'
 
