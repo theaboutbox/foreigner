@@ -32,7 +32,6 @@ describe Foreigner::ConnectionAdapters::PostgreSQLAdapter do
       end
 
       foreign_key = @adapter.foreign_keys(:items)[0]
-      foreign_key.to_table.should eql('collections')
       foreign_key.options[:name].should_not be_nil
     end
 
@@ -44,11 +43,19 @@ describe Foreigner::ConnectionAdapters::PostgreSQLAdapter do
       end
 
       foreign_key = @adapter.foreign_keys(:items)[0]
-      foreign_key.to_table.should eql('collections')
       foreign_key.options[:primary_key].should eql('id')
     end
 
-    it 'should use a conventional column id'
+    it 'should use a conventional column id' do
+      create_table :items do |t|
+        t.string :name
+        t.references :collection, :null => false
+        t.foreign_key :collection
+      end
+
+      foreign_key = @adapter.foreign_keys(:items)[0]
+      foreign_key.options[:column].should eql('collection_id')
+    end
 
     it 'should accept a :column parameter' do
       @column = :item_collection_id
