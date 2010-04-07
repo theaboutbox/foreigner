@@ -56,7 +56,14 @@ describe Foreigner::SchemaDumper do
     )
   end
 
-  it 'should ignore custom column id conforming to Rails convention'
+  it 'should ignore custom column id conforming to Rails convention' do
+    @to_table = 'collections'
+    @column = @to_table.to_s.singularize + '_id'
+    @dumper.generate_schema_statement(:to_table => @to_table, :column => @column).should match(
+      /\s*add_foreign_key\s+:items,\s#{@to_table.to_sym.inspect}/
+    )
+  end
+
   it 'should generate with a custom primary key'
   it 'should ignore custom primary key conforming to Rails convention'
   it 'should generate with a :dependent => :nullify'
