@@ -71,7 +71,13 @@ describe Foreigner::SchemaDumper do
     )
   end
 
-  it 'should ignore custom primary key conforming to Rails convention'
+  it 'should ignore custom primary key conforming to Rails convention' do
+    @primary_key = 'id'
+    @dumper.generate_schema_statement(:primary_key => @primary_key).should match(
+      /\s*add_foreign_key\s+:items,\s:collections/
+    )
+  end
+
   it 'should generate with a :dependent => :nullify'
   it 'should generate with a :dependent => :delete'
 
