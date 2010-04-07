@@ -26,11 +26,11 @@ module Foreigner
         fk_info.map do |row|
           options = {:column => row['column'], :name => row['name'], :primary_key => row['primary_key']}
 
-          if row['dependency'] == 'CASCADE'
-            options[:dependent] = :delete
-          elsif row['dependency'] == 'SET NULL'
-            options[:dependent] = :nullify
-          end
+          options[:dependent] = case row['dependency']
+            when 'CASCADE'  then :delete
+            when 'SET NULL' then :nullify
+            end
+
           ForeignKeyDefinition.new(table_name.to_s, row['to_table'], options)
         end
       end
