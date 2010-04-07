@@ -68,7 +68,22 @@ describe Foreigner::ConnectionAdapters::PostgreSQLAdapter do
       foreign_key.to_table.should eql('collections')
     end
 
-    it 'should extract foreign key name'
+    it 'should extract foreign key name' do
+      fk_name = 'custom_foreign_key'
+
+      create_migration do 
+        create_table :items do |t|
+          t.string :name
+          t.references :collection, :null => false
+        end
+        add_foreign_key :items, :collections, :name => fk_name
+      end.up
+
+      @adapter.foreign_keys(:items).length.should eql(1)
+      foreign_key = @adapter.foreign_keys(:items)[0]
+      foreign_key.options[:name].should eql(fk_name)
+    end
+
     it 'should extract foreign column'
     it 'should extract id'
     it 'should extract :dependent => :nullify'
