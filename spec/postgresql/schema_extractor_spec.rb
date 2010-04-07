@@ -25,7 +25,25 @@ describe Foreigner::ConnectionAdapters::PostgreSQLAdapter do
       foreign_key.should be_respond_to(:options)
     end
 
-    it 'should extract multiple foreign keys'
+    it 'should extract multiple foreign keys' do
+      create_table :owners do |t|
+        t.string :name
+      end
+
+      create_table :items do |t|
+        t.string :name
+        t.references :collection, :null => false
+        t.foreign_key :collection
+        t.references :owner, :null => false
+        t.foreign_key :owner
+      end
+
+      @adapter.foreign_keys(:items).length.should eql(2)
+      foreign_key_names = @adapter.foreign_keys(:items).map(&:to_table)
+      foreign_key_names.should be_include('collections')
+      foreign_key_names.should be_include('owners')
+    end
+
     it 'should extract referencing table'
     it 'should extract foreign table'
     it 'should extract foreign key name'
