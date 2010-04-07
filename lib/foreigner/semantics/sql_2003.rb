@@ -25,13 +25,10 @@ module Foreigner
       end
 
       def remove_foreign_key(table, options)
-        foreign_key_name = if Hash === options
-          foreign_key_name(table, options[:column], options)
-        else
-          foreign_key_name(table, "#{options.to_s.singularize}_id")
-        end
-
-        execute(sql_for_remove_foreign_key(table, foreign_key_name))
+        # If the second argument is table name (String/Symbol) then convert that to the
+        # to the full options hash
+        options = { :column => column_name(options) } if String === options || Symbol === options
+        execute(sql_for_remove_foreign_key(table, foreign_key_name(table, options[:column], options)))
       end
 
       private
@@ -39,6 +36,10 @@ module Foreigner
       def foreign_key_name(table, column, options = {})
         return options[:name] if options[:name]
         "fk_#{table}_#{column}"
+      end
+
+      def column_name(column)
+        "#{column.to_s.singularize}_id"
       end
       
       # Generates SQL and returns it. 
