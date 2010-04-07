@@ -7,11 +7,14 @@ Further, all of our plugins must be thoroughly tested. To make sure that Postgre
 done by Matt Higgins and D. Wilkie were forked and all the tests were converted to use rspec. Dependency on plugin_test_helper
 was taken out. 
 
+h2. Test Coverage
+
 These tests were created and tested against our target platform, Rails 2.3.5. Support for Rails 3 will come in the future
-when we actually move our platform to Rails 3.
+when we actually move our platform to Rails 3. The PostgreSQL 8.3 has the best coverage.
 
 PostgreSQL (tested against 8.3.9)
  - "Schema" tests: do the table migrations actually add referential integrity?
+ - "Schema Extractor" tests: does the foreign_key() method extract out the foreign key from information_schema? 
  - "Semantics" tests: do the add/drop constraints emit proper SQL?
 
 MySQL (tested against 5.0.90 / Gentoo mysql-5.0.90-r2 hardened x86_64)
@@ -21,8 +24,10 @@ MySQL (tested against 5.0.90 / Gentoo mysql-5.0.90-r2 hardened x86_64)
 SQLite3 (tested against 3.6.22 in-memory only)
  - "Semantics" tests: do the add/drop constraints emit proper SQL?
 
+Schema Dumper
+ - Are we emitting the correct schema.rb syntax for adding foreign key constraints?
+
 TODO:
- - Schema Dumper rspec
  - CHECK Constraints (PostgreSQL-only)
  - CHECK Constraints implemented as triggers for MySQL. This is unlikely to be supported since we don't plan to deploy to MySQL
 
