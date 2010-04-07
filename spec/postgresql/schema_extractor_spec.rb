@@ -84,7 +84,18 @@ describe Foreigner::ConnectionAdapters::PostgreSQLAdapter do
       foreign_key.options[:name].should eql(fk_name)
     end
 
-    it 'should extract foreign column'
+    it 'should extract foreign column' do
+      create_table :items do |t|
+        t.string :name
+        t.references :collection, :null => false
+        t.foreign_key :collection
+      end
+
+      @adapter.foreign_keys(:items).length.should eql(1)
+      foreign_key = @adapter.foreign_keys(:items)[0]
+      foreign_key.options[:column].should eql('collection_id')
+    end
+
     it 'should extract id'
     it 'should extract :dependent => :nullify'
     it 'should extract :dependent => :delete'
