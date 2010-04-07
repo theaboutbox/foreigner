@@ -64,7 +64,13 @@ describe Foreigner::SchemaDumper do
     )
   end
 
-  it 'should generate with a custom primary key'
+  it 'should generate with a custom primary key' do
+    @primary_key = 'upc'
+    @dumper.generate_schema_statement(:primary_key => @primary_key).should match(
+      /\s*add_foreign_key\s+:items,\s:collections,\s+:primary_key\s+=>\s+\"#{@primary_key}\"/
+    )
+  end
+
   it 'should ignore custom primary key conforming to Rails convention'
   it 'should generate with a :dependent => :nullify'
   it 'should generate with a :dependent => :delete'
