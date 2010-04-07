@@ -54,5 +54,5 @@ Foreigner.on_load do
     end
   end
   
-  Foreigner.load_adapter! if ActiveRecord::Base.connected?
+  Foreigner.load_adapter! if defined?(Rails) # Audo-load if within Rails
 end
