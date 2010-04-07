@@ -36,7 +36,18 @@ describe Foreigner::ConnectionAdapters::PostgreSQLAdapter do
       foreign_key.options[:name].should_not be_nil
     end
 
-    it 'should use a conventional primary key'
+    it 'should use a conventional primary key' do
+      create_table :items do |t|
+        t.string :name
+        t.references :collection, :null => false
+        t.foreign_key :collection
+      end
+
+      foreign_key = @adapter.foreign_keys(:items)[0]
+      foreign_key.to_table.should eql('collections')
+      foreign_key.options[:primary_key].should eql('id')
+    end
+
     it 'should use a conventional column id'
 
     it 'should accept a :column parameter' do
