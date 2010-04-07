@@ -24,6 +24,10 @@ describe Foreigner::ConnectionAdapters::PostgreSQLAdapter do
       foreign_key.options[:dependent].should be_nil
     end
 
+    it 'should use a default foreign key name'
+    it 'should use a conventional primary key'
+    it 'should use a conventional column id'
+
     it 'should accept a :column parameter' do
       @column = :item_collection_id
 
