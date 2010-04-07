@@ -127,7 +127,16 @@ describe Foreigner::ConnectionAdapters::PostgreSQLAdapter do
       foreign_key.options[:dependent].should eql(@dependent)
     end
 
-    it 'should extract :dependent => :delete'
+    it 'should extract :dependent => :delete' do
+      @dependent = :delete
+      create_table :items do |t|
+        t.string :name
+        t.references :collection, :foreign_key => {:dependent => @dependent}
+      end
+
+      foreign_key = @adapter.foreign_keys(:items)[0]
+      foreign_key.options[:dependent].should eql(@dependent)
+    end
   end
 
 end
