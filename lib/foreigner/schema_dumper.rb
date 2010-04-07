@@ -24,8 +24,8 @@ module Foreigner
         decorator = [
         # [ :option_name, lambda { |fk| filter } ],
           [ :name,        lambda { |fk| fk.options[:name] } ],
-          [ :column,      lambda { |fk| fk.options[:column] != "#{fk.to_table.singularize}_id" } ],
-          [ :primary_key, lambda { |fk| fk.options[:primary_key] != 'id' } ],
+          [ :column,      lambda { |fk| fk.options[:column] && fk.options[:column] != "#{fk.to_table.singularize}_id" } ],
+          [ :primary_key, lambda { |fk| fk.options[:primary_key] && fk.options[:primary_key] != 'id' } ],
           [ :dependent,   lambda { |fk| fk.options[:dependent].present? } ]
         ] 
 
@@ -36,7 +36,7 @@ module Foreigner
           if foreign_key.options
             statement_parts << decorator.map do |option, guard|
               [ ':', option, ' => ', foreign_key.options[option].inspect ].join if guard.call(foreign_key)
-            end
+            end - [nil]
           end
           '  ' + statement_parts.join(', ')
         end

@@ -9,6 +9,13 @@ class SchemaDumperTester
   include Foreigner::SchemaDumper
   include ForeignKeyDefinitionFactory
 
+  def valid_foreign_key_definition(opt = {})
+    options = {
+      :from_table => 'items',
+      :to_table => 'collections'
+    }.merge(opt)
+  end
+
   # Helper when we want to test a single generated statement
   def generate_schema_statement(foreign_key_definition)
     fkd = new_foreign_key(foreign_key_definition)
@@ -17,7 +24,6 @@ class SchemaDumperTester
 end
 
 describe Foreigner::SchemaDumper do
-  include ForeignKeyDefinitionFactory
 
   before(:each) do 
     @dumper = SchemaDumperTester.new
@@ -36,8 +42,13 @@ describe Foreigner::SchemaDumper do
     @dumper.generate_schema_statement(@fk_definition).should match(/\s*add_foreign_key\s+:items,\s:collections/)
   end
 
-  it 'should generate with a default foreign key name'
-  it 'should generate with the referenced table'
+  it 'should generate with a custom foreign key name' do
+    @foreign_key_name = 'fk_foreign_key_name'
+    @dumper.generate_schema_statement(:name => @foreign_key_name).should match(
+      /\s*add_foreign_key\s+:items,\s:collections,\s+:name\s+=>\s+\"#{@foreign_key_name}\"/
+    )
+  end
+
   it 'should generate with a custom column id'
   it 'should generate with a custom primary key'
   it 'should generate with a :dependent => :nullify'

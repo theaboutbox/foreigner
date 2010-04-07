@@ -55,13 +55,16 @@ module ForeignKeyDefinitionFactory
       :from_table => 'items',
       :to_table => 'collections'
     }.merge(opt)
-    from_table = options.delete(:from_table)
-    to_table = options.delete(:to_table)
-    [from_table, to_table, options]
+  end
+
+  def valid_foreign_key_args(definition)
+    from_table = definition.delete(:from_table)
+    to_table = definition.delete(:to_table)
+    [from_table, to_table, definition]
   end
 
   def new_foreign_key(opt = {})
-    args = valid_foreign_key_definition(opt) 
+    args = valid_foreign_key_args(valid_foreign_key_definition(opt))
     Foreigner::ConnectionAdapters::ForeignKeyDefinition.new(*args)
   end
 end
