@@ -96,7 +96,26 @@ describe Foreigner::ConnectionAdapters::PostgreSQLAdapter do
       foreign_key.options[:column].should eql('collection_id')
     end
 
-    it 'should extract id'
+    it 'should extract primary key' do
+      primary_key = 'acctno'
+      create_table :accounts, :primary_key => primary_key do |t|
+        t.integer primary_key, :null => false
+        t.string :name
+      end
+
+      create_migration do 
+        create_table :items do |t|
+          t.string :name
+          t.integer primary_key, :null => false
+        end
+        add_foreign_key :items, :accounts, :column => primary_key, :primary_key => primary_key
+      end.up
+
+      @adapter.foreign_keys(:items).length.should eql(1)
+      foreign_key = @adapter.foreign_keys(:items)[0]
+      foreign_key.options[:primary_key].should eql(primary_key)
+    end
+
     it 'should extract :dependent => :nullify'
     it 'should extract :dependent => :delete'
   end

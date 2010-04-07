@@ -40,9 +40,9 @@ module MigrationFactory
   #   migration = create_table do |t|
   #     t.string :name
   #   end
-  def create_table(table = :items, &blk)
+  def create_table(table = :items, opts = {}, &blk)
     migration = create_migration do
-      create_table(table, &blk)
+      create_table(table, opts, &blk)
     end
     migration.up 
   end
