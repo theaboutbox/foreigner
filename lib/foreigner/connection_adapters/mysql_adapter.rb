@@ -33,7 +33,7 @@ module Foreigner
               options[:dependent] = :nullify
             end
           end
-          ForeignKeyDefinition.new(table_name, row['to_table'], options)
+          ForeignKeyDefinition.new(table_name.to_s, row['to_table'], options)
         end
       end
     end

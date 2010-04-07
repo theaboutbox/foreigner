@@ -2,7 +2,7 @@
 # CONFIGURATIONS is defined in spec_helper
 
 module AdapterHelper
-  class AdapterTester
+  module AdapterTestHarness
     def recreate_test_environment(env)
       ActiveRecord::Base.establish_connection(CONFIGURATIONS[env])
 
@@ -16,6 +16,10 @@ module AdapterHelper
 
     def schema(table_name)
       raise 'This method must be overridden'
+    end
+
+    def foreign_keys(table)
+      ActiveRecord::Base.connection.foreign_keys(table)
     end
 
     private
@@ -34,12 +38,9 @@ module AdapterHelper
 
   end
 
-  class PostgreSQLTestAdapter < AdapterTester
+  class PostgreSQLTestAdapter
     include Foreigner::ConnectionAdapters::PostgreSQLAdapter
-
-    def foreign_keys(table)
-      ActiveRecord::Base.connection.foreign_keys(table)
-    end
+    include AdapterTestHarness
 
     def recreate_test_environment
       ActiveRecord::Base.establish_connection(CONFIGURATIONS[:postgresql_admin])
@@ -55,8 +56,9 @@ module AdapterHelper
     end
   end
 
-  class MySQLTestAdapter < AdapterTester
+  class MySQLTestAdapter 
     include Foreigner::ConnectionAdapters::MysqlAdapter
+    include AdapterTestHarness
 
     def schema(table_name)
       ActiveRecord::Base.connection.select_one("SHOW CREATE TABLE #{quote_table_name(table_name)}")["Create Table"]
@@ -67,14 +69,19 @@ module AdapterHelper
     end
   end
 
-  class SQLite3TestAdapter < AdapterTester
+  class SQLite3TestAdapter 
     include Foreigner::ConnectionAdapters::SQLite3Adapter
+    include AdapterTestHarness
 
     def schema(table_name) ActiveRecord::Base.connection.select_value %{
         SELECT sql
         FROM sqlite_master
         WHERE name = '#{table_name}'
       }
+    end
+
+    def foreign_keys(table)
+      raise "Unimplemented"
     end
 
     def recreate_test_environment

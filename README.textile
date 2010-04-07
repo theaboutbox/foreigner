@@ -19,6 +19,7 @@ PostgreSQL (tested against 8.3.9)
 
 MySQL (tested against 5.0.90 / Gentoo mysql-5.0.90-r2 hardened x86_64)
  - "Schema" tests: do the table migrations actually add referential integrity?
+ - "Schema Extractor" tests: does the foreign_key() method extract out the foreign key from information_schema? 
  - "Semantics" tests: do the add/drop constraints emit proper SQL?
 
 SQLite3 (tested against 3.6.22 in-memory only)
