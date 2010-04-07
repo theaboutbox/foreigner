@@ -45,14 +45,14 @@ describe Foreigner::SchemaDumper do
   it 'should generate with a custom foreign key name' do
     @foreign_key_name = 'fk_foreign_key_name'
     @dumper.generate_schema_statement(:name => @foreign_key_name).should match(
-      /\s*add_foreign_key\s+:items,\s:collections,\s+:name\s+=>\s+\"#{@foreign_key_name}\"/
+      /\s*add_foreign_key\s+:items,\s+:collections,\s+:name\s+=>\s+\"#{@foreign_key_name}\"/
     )
   end
 
   it 'should generate with a custom column id' do
     @column = 'acctno'
     @dumper.generate_schema_statement(:column => @column).should match(
-      /\s*add_foreign_key\s+:items,\s:collections,\s+:column\s+=>\s+\"#{@column}\"/
+      /\s*add_foreign_key\s+:items,\s+:collections,\s+:column\s+=>\s+\"#{@column}\"/
     )
   end
 
@@ -60,35 +60,35 @@ describe Foreigner::SchemaDumper do
     @to_table = 'collections'
     @column = @to_table.to_s.singularize + '_id'
     @dumper.generate_schema_statement(:to_table => @to_table, :column => @column).should match(
-      /\s*add_foreign_key\s+:items,\s#{@to_table.to_sym.inspect}/
+      /\s*add_foreign_key\s+:items,\s+#{@to_table.to_sym.inspect}/
     )
   end
 
   it 'should generate with a custom primary key' do
     @primary_key = 'upc'
     @dumper.generate_schema_statement(:primary_key => @primary_key).should match(
-      /\s*add_foreign_key\s+:items,\s:collections,\s+:primary_key\s+=>\s+\"#{@primary_key}\"/
+      /\s*add_foreign_key\s+:items,\s+:collections,\s+:primary_key\s+=>\s+\"#{@primary_key}\"/
     )
   end
 
   it 'should ignore custom primary key conforming to Rails convention' do
     @primary_key = 'id'
     @dumper.generate_schema_statement(:primary_key => @primary_key).should match(
-      /\s*add_foreign_key\s+:items,\s:collections/
+      /\s*add_foreign_key\s+:items,\s+:collections/
     )
   end
 
   it 'should generate with a :dependent => :nullify' do
     @dependent = :nullify
     @dumper.generate_schema_statement(:dependent => @dependent).should match(
-      /\s*add_foreign_key\s+:items,\s:collections,\s+:dependent\s+=>\s+#{@dependent.inspect}/
+      /\s*add_foreign_key\s+:items,\s+:collections,\s+:dependent\s+=>\s+#{@dependent.inspect}/
     )
   end
 
   it 'should generate with a :dependent => :delete' do
     @dependent = :delete
     @dumper.generate_schema_statement(:dependent => @dependent).should match(
-      /\s*add_foreign_key\s+:items,\s:collections,\s+:dependent\s+=>\s+#{@dependent.inspect}/
+      /\s*add_foreign_key\s+:items,\s+:collections,\s+:dependent\s+=>\s+#{@dependent.inspect}/
     )
   end
 
