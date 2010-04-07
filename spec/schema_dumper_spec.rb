@@ -49,7 +49,13 @@ describe Foreigner::SchemaDumper do
     )
   end
 
-  it 'should generate with a custom column id'
+  it 'should generate with a custom column id' do
+    @column = 'acctno'
+    @dumper.generate_schema_statement(:column => @column).should match(
+      /\s*add_foreign_key\s+:items,\s:collections,\s+:column\s+=>\s+\"#{@column}\"/
+    )
+  end
+
   it 'should generate with a custom primary key'
   it 'should generate with a :dependent => :nullify'
   it 'should generate with a :dependent => :delete'
