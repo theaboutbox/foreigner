@@ -23,18 +23,20 @@ module Foreigner
       def generate_foreign_keys_statements(foreign_keys)
         decorator = [
         # [ :option_name, lambda { |fk| filter } ],
-          [ :name,        lambda { |fk| true } ],
+          [ :name,        lambda { |fk| fk.options[:name] } ],
           [ :column,      lambda { |fk| fk.options[:column] != "#{fk.to_table.singularize}_id" } ],
           [ :primary_key, lambda { |fk| fk.options[:primary_key] != 'id' } ],
           [ :dependent,   lambda { |fk| fk.options[:dependent].present? } ]
         ] 
 
         foreign_keys.map do |foreign_key|
-          statement_parts = [[ ' ', 'add_foreign_key', foreign_key.from_table.inspect].join(' ') ]
-          statement_parts << foreign_key.to_table.inspect
+          statement_parts = [[ ' ', 'add_foreign_key', foreign_key.from_table.to_sym.inspect].join(' ') ]
+          statement_parts << foreign_key.to_table.to_sym.inspect
 
-          statement_parts << decorator.map do |option, guard|
-            [ ':', option, ' => ', foreign_key[option].inspect ].join if guard.call(foreign_key)
+          if foreign_key.options
+            statement_parts << decorator.map do |option, guard|
+              [ ':', option, ' => ', foreign_key.options[option].inspect ].join if guard.call(foreign_key)
+            end
           end
           '  ' + statement_parts.join(', ')
         end
