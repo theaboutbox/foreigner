@@ -1,6 +1,9 @@
 
 require 'rubygems'
 
+#require 'rspec/rails'
+require 'rspec'
+
 require 'active_support'
 require 'active_record'
 require 'active_record/connection_adapters/postgresql_adapter'
