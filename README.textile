@@ -9,10 +9,12 @@ was taken out.
 
 h2. Test Coverage
 
-These tests were created and tested against our target platform, Rails 2.3.5. Support for Rails 3 will come in the future
-when we actually move our platform to Rails 3. The PostgreSQL 8.3 has the best coverage.
+These tests were created and tested against our target platform, Rails 3. If you are using Rails 2.3.5, 
+use sparkfly-foreigner 0.6.0. this currently works with Rails 3.0 beta 3.
 
-PostgreSQL (tested against 8.3.9)
+Rspec coverage was against Rspec 2.0 beta6
+
+PostgreSQL (tested against 8.3.9, 8.4.2)
  - "Schema" tests: do the table migrations actually add referential integrity?
  - "Schema Extractor" tests: does the foreign_key() method extract out the foreign key from information_schema? 
  - "Semantics" tests: do the add/drop constraints emit proper SQL?
@@ -24,6 +26,7 @@ MySQL (tested against 5.0.90 / Gentoo mysql-5.0.90-r2 hardened x86_64)
 
 SQLite3 (tested against 3.6.22 in-memory only)
  - "Semantics" tests: do the add/drop constraints emit proper SQL?
+ - Warning: sqlite3 probably does not actually work when you use it.
 
 Schema Dumper
  - Are we emitting the correct schema.rb syntax for adding foreign key constraints?
@@ -33,6 +36,15 @@ TODO:
  - CHECK Constraints implemented as triggers for MySQL. This is unlikely to be supported since we don't plan to deploy to MySQL
 
 h2. Usage 
+
+h3. Installation
+
+Add this to your Gemfile:
+<pre>
+  gem 'sparkfly-foreigner', :require => 'foreigner'
+</pre>
+
+h3. Migrations
 
 To specify a different column name you can do the following:
 <pre>
@@ -66,7 +78,7 @@ To specify a reference with a foreign key constraint using Rails convention:
 
 Read the specs for more example usage.
 
-h2. schema.rb
+h3. schema.rb
 
 All of the constrants are updated in schema.rb when you either:
 <pre>
@@ -76,25 +88,17 @@ All of the constrants are updated in schema.rb when you either:
 This allows you to see the state of your migratons and
 take advantage of using <pre>rake db:schema:load</pre>
 
-h2. Installation
-
-h3. Rails 3
-
-- Have not tested any of these changes against Rails 3.
-- See the matthuhiggins-foreigner or dwilkie-foreigner if you want a Foreigner that plays nice with Rails 3. 
-
-h3. Rails 2.3.5
-
-Add the following to environment.rb:
-<pre>config.gem "sparkfly-foreigner", :lib => "foreigner"</pre>
-Then run:
-<pre>sudo rake gems:install</pre>
-
 h2. Testing
 
-You will need rspec and possibly rspec-rails. Run "rake spec" to run all the spec. Make sure
-that all of the PostgreSQL and MySQL databases defined in spec/spec_helper.rb are created
-before you run those tests.
+You will need rspec 2.0. At the time of this writing, you install it with:
+<pre>
+gem install rspec --pre
+</pre>
+
+You will also want to make sure you have Rubygems 1.3.6
+
+Run "rake spec" to run all the spec. Make sure that all of the PostgreSQL and MySQL databases defined in 
+spec/spec_helper.rb are created before you run those tests.
 
 h2. Copyrights
 

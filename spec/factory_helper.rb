@@ -29,7 +29,9 @@ module MigrationFactory
     #   def self.up 
     #   end
     # end
-    migration.metaclass.class_eval do
+
+    # ActiveSupport 3.0 changed the name to singleton_class
+    (migration.respond_to?(:singleton_class) ? migration.singleton_class : migration.metaclass).class_eval do
       define_method(:up, &blk)
     end
     migration
