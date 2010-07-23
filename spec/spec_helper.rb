@@ -20,14 +20,14 @@ require File.expand_path('adapter_helper.rb', File.dirname(__FILE__))
 CONFIGURATIONS = {
   :postgresql => {
     :adapter => "postgresql",
-    :username => "root",
+    :username => "cpope",
     :password => "",
     :database => "test_foreigner_gem",
     :min_messages => "ERROR"
   },
   :postgresql_admin => {
     :adapter => "postgresql",
-    :username => "root",
+    :username => "cpope",
     :password => "",
     :database => "test",
     :min_messages => "ERROR"

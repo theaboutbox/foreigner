@@ -1,6 +1,7 @@
 require 'rake'
 require 'rake/testtask'
 require 'rake/rdoctask'
+require 'rspec'
 require 'rspec/core/rake_task'
 
 desc 'Default: run specs.'
@@ -24,11 +25,11 @@ end
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gemspec|
-    gemspec.name = "sparkfly-foreigner"
+    gemspec.name = "theaboutbox-foreigner"
     gemspec.summary = "Foreign keys for Rails migrations for PostgreSQL, MySQL and Sqlite3. Based on dwilkie-foreigner"
-    gemspec.description = "Allows you to add foreign keys to your migrations and enforce them"
+    gemspec.description = "Allows you to add foreign keys to your migrations and enforce them. Forked to fix exception on Rails 3 beta 4"
     gemspec.email = "hosh@sparkfly.com"
-    gemspec.homepage = "http://github.com/hosh/foreigner"
+    gemspec.homepage = "http://github.com/theaboutbox/foreigner"
     gemspec.authors = ["Ho-Sheng Hsiao"]
   end
   Jeweler::GemcutterTasks.new
