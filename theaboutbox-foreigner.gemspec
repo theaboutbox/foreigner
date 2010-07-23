@@ -41,7 +41,8 @@ Gem::Specification.new do |s|
      "spec/schema_dumper_spec.rb",
      "spec/spec_helper.rb",
      "spec/sqlite3/schema_spec.rb",
-     "tasks/foreigner_tasks.rake"
+     "tasks/foreigner_tasks.rake",
+     "theaboutbox-foreigner.gemspec"
   ]
   s.homepage = %q{http://github.com/theaboutbox/foreigner}
   s.rdoc_options = ["--charset=UTF-8"]
